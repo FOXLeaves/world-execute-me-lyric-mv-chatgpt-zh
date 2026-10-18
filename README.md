@@ -11,7 +11,7 @@
 ![ChatGPT](docs/images/cover-chatgpt-v6.jpg)
 
 ## 授權
-
+- 原项目 https://github.com/Nyankomintsu/world-execute-me-lyric-mv
 - 程式碼與本項目自己撰寫的文件:MIT,見 [LICENSE](LICENSE)。
 - 角色剪影(`assets/character/`)與含有它們的畫面:CC BY-NC-SA 4.0。
 - 歌曲與歌詞屬於 Mili 及相關權利人,不在本倉庫內,也不在上述授權之內;由本工程導出的影片含有原曲,
