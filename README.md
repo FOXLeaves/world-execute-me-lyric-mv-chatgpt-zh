@@ -8,9 +8,7 @@
 
 非官方同人作品 · an unofficial fan work
 
-![ChatGPT Cinematic V11 / V7 character art base](docs/images/cover-chatgpt-v6.jpg)
-
-**影片 / Video:** [Bilibili](https://www.bilibili.com/video/BV186pc65E68)　|　**[中文](#中文)**　|　**[English](#english)**　|　**[提示詞 / Prompts](docs/README.md)**
+![ChatGPT](docs/images/cover-chatgpt-v6.jpg)
 
 > [!IMPORTANT]
 > **提示詞在這裡 · Looking for the prompts?**
