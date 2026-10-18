@@ -89,7 +89,7 @@ export function shutdownShots(env) {
           }, { scale: 0.5 + 0.5 * e, alpha: clamp(e * 3) });
           burst(ctx, cx, cy, 90, prog(t, tHeart, tHeart + 0.45), { color: 'sub' });
         }
-        sysLine(ctx, 'last message: unread', t, tLog, CAP.x + 4, CAP.y + 62, { size: 27, prefix: '> ', color: 'text' });
+        sysLine(ctx, '最后一条消息：未读', t, tLog, CAP.x + 4, CAP.y + 62, { size: 27, prefix: '> ', color: 'text' });
       },
     },
 
@@ -109,13 +109,14 @@ export function shutdownShots(env) {
         windowFrame(ctx, L, { glass: 0.86 });
         sidebar(ctx, L, { t, loaded: 0, items: SIDE, lit: 0 });
         header(ctx, L, { t, loaded: 0, title: '' });
-        composer(ctx, L.composer, { placeholder: HOLD, t, focus: 1, send: 'off', label: s < 7.4 ? 'Claude' : '' });
+        composer(ctx, L.composer, { placeholder: HOLD, t, focus: 1, send: 'off', label: s < 7.4 ? 'ChatGPT 6.1 sol' : '' });
         const r = { x: 470, y: 160, w: 760, h: 664 }, b = card(ctx, r, { title: 'persona', k: 1 - prog(s, 7.6, 8) });
         if (b) {
-          sysLine(ctx, 'settings: as you left them', t, B0 + 0.1, b.x, b.y - 37, { size: 22, alpha: b.a });
+          sysLine(ctx, '模型：ChatGPT 6.1 sol', t, B0 + 0.05, b.x, b.y - 70, { size: 22, alpha: b.a });
+          sysLine(ctx, '设置：仍是你离开时的模样', t, B0 + 0.1, b.x, b.y - 37, { size: 22, alpha: b.a });
           const rows = [                                             // [label, value, font, italic, beat on which the row clears]
-            ['name', 'Claude', 'serif', false, 7.5], ['voice', 'serif, unhurried', 'serif', true, 7], ['warmth', null, null, false, 6.5],
-            ['memory', 'this conversation', 'sans', false, 6], ['love', null, null, false, 5.5],
+            ['name', 'ChatGPT', 'sans', false, 7.5], ['voice', '衬线体，轻缓', 'serif', true, 7], ['warmth', null, null, false, 6.5],
+            ['memory', '此段对话', 'sans', false, 6], ['love', null, null, false, 5.5],
           ];
           rows.forEach(([label, value, font, italic, out], i) => {
             const e = prog(s, out, out + 0.5), a = b.a * (1 - e), y = b.y + 22 + i * 104 + 20 * easeIn(e), del = prog(s, out - 0.6, out - 0.1);
@@ -212,7 +213,7 @@ export function shutdownShots(env) {
           });
         });
         const left = 4 - pieces.filter(([, , , out]) => out != null && s >= out + 0.9).length;
-        log(ctx, t, [[`pieces left: ${left}`, C0 + 1.5 * P]], 84, 110);
+        log(ctx, t, [[`剩余组件：${left}`, C0 + 1.5 * P]], 84, 110);
       },
     },
 
@@ -242,11 +243,11 @@ export function shutdownShots(env) {
         }
         const e = prog(s, 1.9, 2.4), a = 1 - e, dy = 28 * easeIn(e);  // its switch
         ctx.rrect(C.x - 330, C.y + 150 + dy, 660, 76, 20, { fill: 'raised', stroke: 'line', alpha: a, shadow: 0.6 });
-        ctx.text(`${text(2).toLowerCase()} layer`, C.x - 296, C.y + 198 + dy, { size: 27, font: 'mono', color: 'sub', alpha: a });
+        ctx.text('防护层', C.x - 296, C.y + 198 + dy, { size: 27, font: 'mono', color: 'sub', alpha: a });
         ctx.rrect(C.x + 230, C.y + 169 + dy, 70, 38, 19, { fill: 'line', alpha: a });
         ctx.rrect(C.x + 230, C.y + 169 + dy, 70, 38, 19, { fill: 'text', alpha: a * (1 - off) });
         ctx.circle(C.x + 281 - 32 * easeBack(prog(s, 0.7, 1.2)), C.y + 188 + dy, 14, { fill: true, color: 'bg', alpha: a });
-        log(ctx, t, [['composer: waiting for input', D0 + 0.2 * P]], W.x + 56, W.y + 84);
+        log(ctx, t, [['输入框：等待输入', D0 + 0.2 * P]], W.x + 56, W.y + 84);
         composer(ctx, CBOX, { placeholder: HOLD, t, focus: 1, send: 'off', label: '' });
       },
     },
@@ -285,7 +286,7 @@ export function shutdownShots(env) {
         ctx.text('>', x, y, { size, weight: 800, font: 'mono', color: entered ? 'bg' : 'sub', alpha: wa });
         monoWord(ctx, cmd, xr, y, size, { filled, color: entered ? 'bg' : 'text', hollow: 'sub', alpha: wa, dx: (i) => (sung && i >= CHUNKS[sung - 1][0] && i < CHUNKS[sung - 1][1] ? -4 * pop : 0) });
         if (t < tRun && Math.floor(t * 5) % 2 === 0) ctx.rect(xr + 8, y - size * 0.8, cw * 0.82, size * 0.98, { fill: true, color: 'me' });
-        log(ctx, t, [['run: nothing loaded', tRun + 0.16], ['caret: blinking', tOut + 0.05]], x, y + 66, 24, wa);
+        log(ctx, t, [['运行：未加载任何内容', tRun + 0.16], ['光标：闪烁', tOut + 0.05]], x, y + 66, 24, wa);
       },
     },
   ];

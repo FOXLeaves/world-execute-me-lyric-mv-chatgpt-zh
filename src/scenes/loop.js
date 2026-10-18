@@ -24,18 +24,23 @@ export const UNREACHABLE = '        // unreachable';
 /** Error codes the three failing statements raise, by line index (all three were raised in the error section). */
 export const LOOP_ERRS = { 1: 'ERR_UNRESOLVED_LOVE', 2: 'ERR_WINDOW_EDGE', 3: 'ERR_REPLY_OVERDUE' };
 export const OVERFLOW = 'ERR_LOVE_OVERFLOW';
-/** The four syllables of the sung word, as character ranges [from, to) of its nine letters. */
-export const CHUNKS = [[0, 2], [2, 3], [3, 5], [5, 9]];
+/** Four sung beats of the translated keyword “执行指令”. */
+export const CHUNKS = [[0, 1], [1, 2], [2, 3], [3, 4]];
 
 /** A word in mono 800 with a right edge and a baseline; `filled` = number of characters printed solid, the rest hollow. */
 export function monoWord(ctx, str, xr, y, size, { filled = str.length, color = 'me', hollow = 'meDim', alpha = 1, dx = () => 0 } = {}) {
-  const cw = ctx.cw(size), x0 = xr - str.length * cw;
+  const cjk = /[\u3400-\u9fff]/u.test(str);
+  const o = { size, font: cjk ? 'scSans' : 'mono', weight: 800 };
+  const widths = [...str].map((ch) => cjk ? ctx.measure(ch, o) : ctx.cw(size));
+  const total = widths.reduce((a, b) => a + b, 0), x0 = xr - total;
+  let pen = x0;
   for (let i = 0; i < str.length; i++) {
-    const on = i < filled, o = { size, font: 'mono', weight: 800 };
-    if (on) ctx.text(str[i], x0 + i * cw + dx(i), y, { ...o, color, alpha });
-    else ctx.text(str[i], x0 + i * cw + dx(i), y, { ...o, color: hollow, alpha, stroke: Math.max(2, size * 0.02) });
+    const on = i < filled;
+    if (on) ctx.text(str[i], pen + dx(i), y, { ...o, color, alpha });
+    else ctx.text(str[i], pen + dx(i), y, { ...o, color: hollow, alpha, stroke: Math.max(2, size * 0.02) });
+    pen += widths[i];
   }
-  return { x: x0, w: str.length * cw };
+  return { x: x0, w: total };
 }
 
 /**
@@ -88,7 +93,10 @@ export function machine(ctx, S) {
   if (overflow > 0) ctx.text(OVERFLOW, ox, by - cs * 0.9 + (1 - easeOut(clamp(overflow * 2))) * 12, { size: 28 * ZL, font: 'mono', weight: 700, color: 'err', alpha: alpha * clamp(overflow * 3) });
 
   // ---- the output (grows from the bottom-right corner): the word of this round, the finished rounds as steps above it
-  const XR = 1830, ws = 150 * ZW, ss = ws * 0.34, pitch = ss * 1.14, base = by - ws * 0.86 - ss * 0.3;
+  const XR = 1830, ws = 150 * ZW, ss = ws * 0.34, pitch = ss * 1.14;
+  // Chinese glyphs have a much taller ink box than the original Latin word;
+  // keep the finished rounds clear of the current giant keyword at its baseline.
+  const base = by - ws * (/[\u3400-\u9fff]/u.test(word) ? 1.30 : 0.86) - ss * 0.3;
   const r = clamp(rise), e = easeOut(r);
   for (let k = 0; k < round; k++) {                                   // k = 0: the newest step
     const y = base - (k - (1 - e)) * pitch - lift;

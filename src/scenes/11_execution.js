@@ -21,6 +21,7 @@ import { codeGround } from '../components/code.js';
 import { clamp, easeOut, lerp, prog } from '../engine/util.js';
 import { cues, tearAt } from './kit.js';
 import { CHUNKS, machine, monoWord } from './loop.js';
+import { absenceNetwork, perspectiveChamber, starVolume } from './cinema_space.js';
 
 export function executionShots(env) {
   const { Bt, P, text } = cues(env);
@@ -53,6 +54,15 @@ export function executionShots(env) {
     ctx.fx.glow = Math.min(ctx.fx.glow, last ? 0.24 : 0.36);          // large flat orange type: little bloom
     ctx.fx.scan = 2.2;
     codeGround(ctx);
+    // An execution loop has become a physical room. The camera travels through
+    // successive depth planes while the exact code timing remains unchanged.
+    ctx.radial(1370, 500, 950, 'meDim', 0.16);
+    starVolume(ctx, t, { focus: [1290, 520], spread: [770, 850], density: 130, alpha: 0.28, color: 'text', accent: 'err', seed: 9 });
+    perspectiveChamber(ctx, t, {
+      center: [1360 - S.i * 10, 520], aperture: [2090, 1270],
+      alpha: 0.46 + S.i * 0.015, color: 'err', minor: 'line', speed: 0.5 + S.i * 0.035,
+    });
+    if (S.i >= 4) absenceNetwork(ctx, t, { center: [1250, 430], radius: 920, alpha: 0.2 + 0.012 * S.i, color: 'sub', spark: 'err', broken: true });
     if (!last) {
       machine(ctx, { word: WORD, title: TITLE, round: S.i, sung: S.sung, bar: S.bar, since: S.since, rise: S.rise, zoom: S.zoom, arrow: S.arrow, seen: S.seen, count: S.count });
       if (S.i >= 8) tearAt(ctx, t, tR(S.i) + P, 0.5);                  // from round 9: one tear a round, on its second beat

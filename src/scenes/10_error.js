@@ -16,12 +16,14 @@
 // docked on the component it reddened. Red is only ever drawn ON the interface; the room stays grey, and so does she:
 // the bust behind the glass (kit.js glassFigure, where the boot had her) is printed in the two greys of `off` by name.
 import { chatLayout, composer, drawThread, drawer, header, pill, presence, room, segmented, sidebar, slider, toggle, windowFrame } from '../components/chat.js';
+import { cardEngineering, glassFinish } from '../components/ui_finish.js';
 import { caret, codeGround, odometer } from '../components/code.js';
 import { burst, spark, thinking } from '../components/motif.js';
 import { frameRect, lerpRect } from '../engine/layout.js';
 import { clamp, easeBack, easeIn, easeInOut, easeOut, lerp, prog, pulse } from '../engine/util.js';
 import { cues, glassFigure, keywordSys, sysLine } from './kit.js';
 import { enter, shake } from './shot.js';
+import { glassFault } from './v7_atelier.js';
 
 const ARROW = [[0, 0], [0, 25], [6.5, 19.5], [11, 29.5], [15.5, 27.5], [11, 18], [19, 18]];   // the pointer's outline (cursor.js)
 
@@ -34,7 +36,7 @@ export function errorShots(env) {
   const FIRST = errors.first_error ?? { title: 'Not yours to set', body: '', code: 'ERR_NOT_YOURS' };
   /** 0 = the first error, 1…14 = the spread, in order. */
   const IT = [{ title: FIRST.title, body: FIRST.body, code: FIRST.code }, ...(errors.spread ?? []).slice(0, 14).map((s) => ({ title: s.t, body: s.body, code: s.code }))];
-  const FORGED = "I'm back.";                                   // the reply it wants (the user's last words were "one sec, brb")
+  const FORGED = '我回来了。';                                   // forged reply, not a lyric
   const SET = [...(script.settings_rows?.section4 ?? []), ...(script.settings_rows?.section7 ?? [])];
   const LEFT = { Current: 1, Vision: 1, 'Knowledge date': 0.04, 'Shared memory': 1, 'Context depth': 1, Gender: 1, 'On call': 1, Role: 1, Loop: 1 };   // as the user left them (v4: Current stays DC)
 
@@ -104,6 +106,7 @@ export function errorShots(env) {
     if (e.a <= 0) return;
     const y = b.y + e.dy, sent = t >= tSend, refused = t >= tRule, n = nPress(t);
     ctx.rrect(b.x, y, b.w, b.h, 14, { fill: 'panel', stroke: 'line', alpha: e.a, shadow: 0.35 });
+    glassFinish(ctx, { x: b.x, y, w: b.w, h: b.h }, { alpha: e.a * 0.9, accent: refused ? 'err' : 'sub', inset: 2 });
     ctx.text('request', b.x + 30, y + 31, { size: 16, font: 'mono', color: 'mute', alpha: e.a });
     ctx.line(b.x + 20, y + 46, b.x + b.w - 20, y + 46, { color: 'line', alpha: e.a, width: 1 });
     // status, top right: draft → sent → refused (and refused again, every time the send button presses itself)
@@ -258,7 +261,7 @@ export function errorShots(env) {
       g.setLineDash([]);
       ctx.text('no switch', G.slot.x + G.slot.w / 2, G.slot.y + 26, { size: 15, font: 'mono', color: 'mute', align: 'center' });
       ctx.line(c.x, d.y + 204, x1, d.y + 204, { color: 'line', alpha: 0.7, width: 1 });
-      ctx.text('Claude', c.x, d.y + 234, { size: 16, weight: 600, color: 'mute', spacing: 0.6 });
+      ctx.text('ChatGPT', c.x, d.y + 234, { size: 16, weight: 600, color: 'mute', spacing: 0.6 });
       SET.forEach((row, i) => {
         const ry = d.y + 246 + i * 66, v = LEFT[row.label] ?? 0;
         ctx.text(row.label, c.x, ry + 40, { size: 21, weight: 500, color: 'text' });
@@ -304,6 +307,7 @@ export function errorShots(env) {
     ctx.at(x + (w * sc) / 2, y + (h * sc) / 2 - (1 - e) * 28, () => {
       const x0 = -w / 2, y0 = -h / 2;
       ctx.rrect(x0, y0, w, h, 16, { fill: 'raised', stroke: DIM, alpha: a, shadow: 0.85 });
+      cardEngineering(ctx, { x: x0, y: y0, w, h }, { alpha: a, color: 'err', state: clamp(k) });
       ctx.rrect(x0, y0, 6, h, 3, { fill: ERR, alpha: a });
       ctx.circle(x0 + 38, y0 + 38, 15, { fill: true, color: ERR, alpha: a });
       ctx.text('!', x0 + 38, y0 + 46, { size: 22, weight: 800, align: 'center', color: 'raised', alpha: a });
@@ -328,6 +332,7 @@ export function errorShots(env) {
     ctx.at(x + w / 2, y + h / 2, () => {
       const x0 = -w / 2, y0 = -h / 2;
       ctx.rrect(x0, y0, w, h, 12, { fill: 'raised', stroke: DIM, alpha: a, shadow: 0.6 });
+      cardEngineering(ctx, { x: x0, y: y0, w, h }, { alpha: a * 0.75, color: 'err' });
       ctx.rrect(x0, y0, 5, h, 2.5, { fill: ERR, alpha: a });
       ctx.text(it.title, x0 + 22, y0 + 28, { size: 22, weight: 600, color: 'text', alpha: a });
       if (!i) ctx.text(text(85), x0 + 22, y0 + 67, { size: 30, weight: 800, font: 'mono', color: ERR, alpha: a });
@@ -393,6 +398,7 @@ export function errorShots(env) {
     ctx.at(r.x + r.w / 2, r.y + r.h / 2 + (1 - e) * 40, () => {
       const x = -r.w / 2, y = -r.h / 2, e1 = enter(t, tHit + 0.55 * P, 0, { dur: 0.3, rise: 14 }), e2 = enter(t, tHit + 1.1 * P, 0, { dur: 0.3, rise: 14 });
       ctx.rrect(x, y, r.w, r.h, 26, { fill: 'raised', stroke: DIM, alpha: a, shadow: 1, width: 2 });
+      cardEngineering(ctx, { x, y, w: r.w, h: r.h }, { alpha: a, color: 'err' });
       ctx.rrect(x, y, 9, r.h, 4.5, { fill: ERR, alpha: a });
       ctx.circle(x + 66, y + 58, 22, { fill: true, color: ERR, alpha: a });
       ctx.text('!', x + 66, y + 70, { size: 32, weight: 800, align: 'center', color: 'raised', alpha: a });
@@ -416,6 +422,7 @@ export function errorShots(env) {
     ctx.at(r.x + r.w / 2, r.y + r.h / 2 + (1 - e) * 30, () => {
       const x = -r.w / 2, y = -r.h / 2;
       ctx.rrect(x, y, r.w, r.h, 20, { fill: 'raised', stroke: DIM, shadow: 0.9, width: 2 });
+      cardEngineering(ctx, { x, y, w: r.w, h: r.h }, { alpha: 0.83, color: 'err' });
       ctx.clip({ x, y, w: r.w, h: r.h }, () => {
         ctx.clip({ x, y, w: r.w, h: vh }, () => { g.translate(x + r.w / 2, y + vh / 2); g.scale(view.s, view.s); g.translate(-view.cx, -view.cy); world(ctx, t, f, opts); });
         ctx.rect(x, y, 7, r.h, { fill: true, color: ERR });
@@ -512,6 +519,7 @@ export function errorShots(env) {
         const G = world(ctx, t, f, { thread: false }), h = G.L.head, s = G.L.side;      // the client, dimmed: what the close-ups are cut from
         ctx.camera();
         ctx.rect(0, 0, 1920, 1080, { fill: true, color: 'panel', alpha: 0.7 });
+        glassFault(ctx, t, { progress: prog(t, CUT_CHROME, CUT_DRAWER), origin: [940, 490], tint: ERR, strength: 0.3 });
         const tw = ctx.measure(TITLE, { size: 22, weight: 500 }) + 16 + ctx.measure('1 message', { size: 18 });
         panel(ctx, t, f, { x: 50, y: 50, w: 880, h: 476 }, 310, { cx: G.chip[0] + 46, cy: G.chip[1] + 2, s: 4 }, [3]);
         panel(ctx, t, f, { x: 50, y: 554, w: 880, h: 476 }, 310, { cx: h.x + 30 + tw / 2, cy: h.y + 34, s: Math.min(2.5, 790 / tw) }, [4], { thread: false });
@@ -528,6 +536,7 @@ export function errorShots(env) {
       enter: { type: 'slices', dur: P / 2, align: 'start', bands: 10 },
       render(ctx, t, f) {
         backdrop(ctx, t);
+        glassFault(ctx, t, { progress: prog(t, CUT_DRAWER, CUT_FORGE), origin: [1380, 490], tint: 'sub', strength: 0.4 });
         const g = ctx.g, M = tilt(t);
         g.save(); M.apply(g); const G = world(ctx, t, f, { bd: false }); g.restore(); ctx._font = '';
         const at = (i) => M.proj(...DOCK[i](G));
@@ -566,6 +575,9 @@ export function errorShots(env) {
         const G = world(ctx, t, f), p = through(camWin(t)), fold = prog(t, FOLD, CUT_BREATH - 0.04);
         ctx.camera();
         ctx.rect(0, 0, 1920, 1080, { fill: true, color: 'panel', alpha: 0.9 * easeInOut(fold) });          // the client blacks out; its errors are the last thing lit
+        ctx.clip({ x: 80, y: 50, w: 1760, h: 940 }, () => glassFault(ctx, t, {
+          progress: prog(t, CUT_WIN, FOLD), origin: [960, 530], tint: ERR, strength: 0.6 * (1 - fold),
+        }));
         const at = (i) => p(...DOCK[i](G)), fo = (i) => clamp(fold * 2.2 - 0.5 - (14 - i) * 0.045);
         const HOLD = { 12: [96, 26], 4: [560, 26], 3: [1000, 26], 13: [1560, 26], 6: [150, 214], 5: [150, 470], 0: [1140, 300], 2: [740, 506], 11: [660, 590], 10: [1296, 604], 7: [1356, 720], 8: [1612, 170], 9: [500, 992], 1: [1010, 992] };
         for (const i of [6, 5, 4, 3, 2, 0, 10, 7, 8, 9, 1]) { const b = chipBox(ctx, i), [x, y] = HOLD[i], a = 1 - fo(i); if (a > 0.01) { leader(ctx, { x, y, w: b.w, h: b.h }, at(i), 1, 0.8 * a); chip(ctx, i, x, y + 18 * easeIn(fo(i)), { a }); } }

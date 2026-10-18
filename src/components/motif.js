@@ -1,7 +1,8 @@
-// The film's one recurring shape: a radial burst. It is the character's flower ornament and
-// the client's spark icon at once, so it is drawn here, in code, and reused everywhere:
-// app icon, avatar, thinking animation, completion ring, click burst, the shape points gather into.
-// (It is our own drawing of a sunburst, taken from the ornament in the supplied character art.)
+// The film's recurring identity mark. The original radial flower was tied to the
+// prior character; this edition draws a sixfold interlaced knot to echo both
+// ChatGPT's visual language and the white dragon's knot-rose hair ornament.
+// Keep the same public API and twelve reference points so all match cuts,
+// timings, click bursts and geometrical transitions remain deterministic.
 import { clamp } from '../engine/util.js';
 
 const TAU = Math.PI * 2;
@@ -10,39 +11,51 @@ const LEN = [1, 0.8, 0.94, 0.74, 0.98, 0.82, 0.9, 0.76, 1, 0.8, 0.95, 0.78];
 export const RAYS = 12;
 
 /**
- * Sunburst / spark.
- *   lit    0..1  share of the rays that are "on" (the rest are drawn as dim ghosts) — progress, attempts.
- *                Rays light clockwise from 12 o'clock; the one in progress grows from the hub to its tip
- *   grow   0..1  rays extend from the centre (ignition)
- *   pulse  (i) => length multiplier, for the thinking animation
- *   fat    petal half-width as a share of r
+ * Six interleaving curved ribbons / stylised knot mark.
+ * lit lights its ribbons in sequence, preserving all old progress cues.
+ * Unlit ribbons are quiet grey; all geometry depends only on the arguments.
  */
 export function spark(ctx, cx, cy, r, { rays = RAYS, rot = 0, color = 'me', off = 'mute', alpha = 1, lit = 1, grow = 1, fat = 0.105, inner = 0.17, pulse = null, core = 0.1, offAlpha = 0.35 } = {}) {
   if (alpha <= 0.003 || r <= 0) return;
-  const g = ctx.g, nLit = lit * rays;
-  for (const pass of [0, 1]) {                       // 0 = ghosts, 1 = lit petals (drawn on top, one path each pass)
-    g.beginPath();
-    let any = false;
-    for (let i = 0; i < rays; i++) {
-      const on = clamp(nLit - i);                    // 0..1, the petal currently lighting up is partial
+  const g = ctx.g, loops = Math.max(3, Math.round(rays / 2)), nLit = lit * loops;
+  const band = Math.max(0.75, fat / 0.105);
+  for (let i = 0; i < loops; i++) {
+    const on = clamp(nLit - i);
+    const len = r * grow * (pulse ? pulse(i) : 1);
+    if (len < r * inner) continue;
+    for (const pass of [0, 1]) {
       const k = pass ? on : 1 - on;
       if (k <= 0.001) continue;
-      const a = rot + (i / rays) * TAU - Math.PI / 2, c = Math.cos(a), s = Math.sin(a);
-      // the petal that is lighting up grows out of the hub over its ghost, so a slowly animated `lit` never pops
-      const len = r * LEN[i % 12] * grow * (pulse ? pulse(i) : 1) * (pass ? on : 1);
-      const r0 = r * inner, w = r * fat;
-      if (len <= r0) continue;
-      const mx = (r0 + (len - r0) * 0.56), nx = -s * w, ny = c * w;
-      g.moveTo(cx + c * r0, cy + s * r0);
-      g.quadraticCurveTo(cx + c * mx + nx, cy + s * mx + ny, cx + c * len, cy + s * len);
-      g.quadraticCurveTo(cx + c * mx - nx, cy + s * mx - ny, cx + c * r0, cy + s * r0);
-      any = true;
+      g.save();
+      g.translate(cx, cy);
+      g.rotate(rot + i / loops * TAU - Math.PI / 2);
+      g.scale(len, len);
+      g.beginPath();
+      g.moveTo(0.19, -0.29);
+      g.bezierCurveTo(0.33, -0.76, 0.74, -0.99, 0.94, -0.73);
+      g.bezierCurveTo(1.17, -0.44, 0.91, -0.07, 0.61, 0.23);
+      g.lineTo(0.61 - 0.13 * band, 0.23 - 0.18 * band);
+      g.bezierCurveTo(0.72, -0.13, 0.85, -0.42, 0.71, -0.52);
+      g.bezierCurveTo(0.59, -0.67, 0.38, -0.42, 0.35, -0.14);
+      g.closePath();
+      g.fillStyle = ctx.col(pass ? color : off, alpha * k * (pass ? 1 : offAlpha));
+      g.fill();
+      g.restore();
     }
-    if (!any) continue;
-    g.fillStyle = ctx.col(pass ? color : off, alpha * (pass ? 1 : offAlpha));
-    g.fill();
   }
-  if (core > 0) ctx.circle(cx, cy, r * core * grow, { fill: true, color: lit > 0 ? color : off, alpha: alpha * (lit > 0 ? 1 : offAlpha) });
+  if (core > 0) {
+    // Deliberately keep the hexagonal centre open instead of printing the old solid hub.
+    const a = Math.min(1, Math.max(0.12, lit));
+    g.save(); g.beginPath();
+    for (let i = 0; i <= 6; i++) {
+      const th = rot + i * TAU / 6, rr = r * grow * (inner + core * 0.62);
+      const x = cx + Math.cos(th) * rr, y = cy + Math.sin(th) * rr;
+      if (i === 0) g.moveTo(x, y); else g.lineTo(x, y);
+    }
+    g.lineWidth = Math.max(1, r * 0.035 * grow);
+    g.strokeStyle = ctx.col(lit > 0 ? color : off, alpha * a);
+    g.stroke(); g.restore();
+  }
 }
 
 /** The spark while the AI is thinking: a wave runs round the petals and the whole thing turns slowly. */

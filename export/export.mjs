@@ -24,6 +24,15 @@ const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, 'config.json'), 'utf8'));
 const features = JSON.parse(fs.readFileSync(path.join(ROOT, cfg.paths.features), 'utf8'));
 // the lyric lines come from your own lyric file (the repository has none); stop here, before any output is touched, if they cannot be had
 try { ensureLyrics({ quiet: true }); } catch (e) { console.error(e.message); process.exit(1); }
+// The visual-QA helper writes deliberate placeholder text. Never let a normal
+// video export silently present those placeholders as finished song subtitles.
+const localLyrics = JSON.parse(fs.readFileSync(path.join(ROOT, cfg.paths.lyrics), 'utf8'));
+if (/^DEMO\b/i.test(localLyrics.source ?? '') && !process.argv.includes('--allow-demo') && !process.argv.includes('--sheet')) {
+  console.error('[export] Found DEMO lyric placeholders, not the song lyrics.');
+  console.error(`  Put your own .lrc/.txt in "${cfg.paths.lrc}" and run "npm run lyrics".`);
+  console.error('  For a clearly labelled technical test only, add --allow-demo.');
+  process.exit(1);
+}
 
 // ---- arguments -------------------------------------------------------------------
 const argv = process.argv.slice(2);
@@ -111,10 +120,15 @@ const { server, url } = await startServer({ port: 5180, onUpgrade });
 const gpuArgs = ['--ignore-gpu-blocklist', '--enable-gpu', '--use-angle=d3d11', '--force_high_performance_gpu',
   '--disable-background-timer-throttling', '--disable-renderer-backgrounding', '--disable-backgrounding-occluded-windows'];
 let browser;
-for (const channel of [cfg.export.browserChannel, 'chrome', 'msedge', undefined]) {
-  try { browser = await chromium.launch({ channel, headless: !argv.includes('--headed'), args: gpuArgs }); break; } catch { /* try next */ }
+const override = process.env.MV_CHROME_PATH;
+if (override) {
+  browser = await chromium.launch({ executablePath: override, headless: !argv.includes('--headed'), args: [...gpuArgs, '--no-sandbox', '--disable-dev-shm-usage'] });
+} else {
+  for (const channel of [cfg.export.browserChannel, 'chrome', 'msedge', undefined]) {
+    try { browser = await chromium.launch({ channel, headless: !argv.includes('--headed'), args: gpuArgs }); break; } catch { /* try next */ }
+  }
 }
-if (!browser) throw new Error('No Chrome/Edge found for Playwright (set export.browserChannel in config.json)');
+if (!browser) throw new Error('No Chromium/Chrome/Edge found for Playwright (set MV_CHROME_PATH or export.browserChannel)');
 
 try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });

@@ -2,8 +2,14 @@
 import { clamp } from './util.js';
 
 export class Lyrics {
-  constructor(data, cfg, features) {
-    this.lines = data.lines;
+  constructor(data, cfg, features, translations = null) {
+    if (translations && (!Array.isArray(translations.lines) || translations.lines.length !== data.lines.length ||
+      translations.lines.some((s) => typeof s !== 'string' || !s.trim()))) {
+      throw new Error('中文字幕与英文 LRC 行数不一致，或存在空行');
+    }
+    // Preserve all source times, emphasis and sections. The lyric renderer consumes only the
+    // translated text; the original LRC and data/lyrics.json remain untouched for synchronization.
+    this.lines = translations ? data.lines.map((ln, i) => ({ ...ln, text: translations.lines[i], sourceText: ln.text, words: undefined })) : data.lines;
     this.sections = data.sections;
     this.typing = cfg.typing;
     this.offset = cfg.timing.lyricOffset || 0;
@@ -32,7 +38,7 @@ export class Lyrics {
       for (const w of ln.words) { if (w.t + this.offset <= t) n += w.text.length; }
       return { n: Math.min(n, len), done: n >= len };
     }
-    const dur = Math.min(len / this.typing.charsPerSec, (this.end(i) - this.start(i)) * this.typing.maxFraction);
+    const dur = Math.min((ln.sourceText?.length ?? len) / this.typing.charsPerSec, (this.end(i) - this.start(i)) * this.typing.maxFraction);
     const k = clamp((t - this.start(i)) / Math.max(dur, 1e-3));
     return { n: Math.floor(k * len + 1e-6), done: k >= 1 };
   }

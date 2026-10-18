@@ -14,9 +14,12 @@ import { buildPalettes, mixPal } from './palette.js';
 import { resolveTransition } from './transitions.js';
 import { clamp } from './util.js';
 import { buildScenes } from '../scenes/index.js';
+import { UI_ZH_GLYPHS } from '../components/ui_zh.js';
 
 /** Load every font before the first frame, so text never renders in a fallback face. `step` is told of each one. */
-async function loadFonts(cfg, step) {
+async function loadFonts(cfg, step, lyricsZhData) {
+  const zhFace = (cfg.fonts.cjk ?? []).find((c) => c.role === 'scSans');
+  if (zhFace) zhFace.text = [...new Set((zhFace.text ?? '') + UI_ZH_GLYPHS + (lyricsZhData?.lines ?? []).join(''))].join('');
   const jobs = [];
   for (const key of ['mono', 'serif', 'sans']) {
     const { family, pkg, weights, italic = [] } = cfg.fonts[key];
@@ -55,10 +58,10 @@ export function loadSteps(cfg) {
 const getJson = async (p) => { try { return await (await fetch('/' + p.split('/').map(encodeURIComponent).join('/'))).json(); } catch { return null; } };
 
 /** onStep(label), preview only: called as each thing is loaded (the page's progress bar); it never touches a frame. */
-export async function createEngine({ canvas, width, height, cfg, featuresData, lyricsData, flipY = false, lab = null, onStep = null }) {
+export async function createEngine({ canvas, width, height, cfg, featuresData, lyricsData, lyricsZhData, flipY = false, lab = null, onStep = null }) {
   setSeed(cfg.seed);
   const step = onStep ?? (() => {});
-  const [, art, script, errors] = await Promise.all([loadFonts(cfg, step), loadArt(cfg, step), getJson(cfg.paths.script), getJson(cfg.paths.errors)]);
+  const [, art, script, errors] = await Promise.all([loadFonts(cfg, step, lyricsZhData), loadArt(cfg, step), getJson(cfg.paths.script), getJson(cfg.paths.errors)]);
 
   const palettes = buildPalettes(cfg.palettes);
   const mk = (alpha) => new Ctx(document.createElement('canvas'), cfg, palettes, { alpha });
@@ -66,7 +69,7 @@ export async function createEngine({ canvas, width, height, cfg, featuresData, l
   const post = new Post(canvas, cfg);
 
   const features = new Features(featuresData, cfg);
-  const lyrics = new Lyrics(lyricsData, cfg, features);
+  const lyrics = new Lyrics(lyricsData, cfg, features, lyricsZhData);
   // env: what every section file receives. art = character illustrations, script / errors = the written conversation.
   const all = await buildScenes({ cfg, features, lyrics, art, script: script ?? {}, errors: errors ?? {} }, { lab });
   await step('scenes');

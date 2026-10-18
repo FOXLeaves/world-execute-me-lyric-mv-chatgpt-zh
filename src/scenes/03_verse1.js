@@ -7,7 +7,7 @@
 //   v1-sine     text riding the wave  the circle unrolls into a sine wave; the cursor sits on it, a TANGENT under it
 //   v1-limit    graph                 the wave is damped towards a line; the user presses Stop: that line is the LIMIT
 // One outline is carried across every cut (match cuts): burst → points → cube silhouette → circle → wave → curve.
-import { chatLayout, composer, header, pill, room, windowFrame } from '../components/chat.js';
+import { chatLayout, pill } from '../components/chat.js';
 import { drawCursor, pointer } from '../components/cursor.js';
 import { spark, sparkTips } from '../components/motif.js';
 import { MESH, drawSegs, project, rot } from '../engine/geom.js';
@@ -18,6 +18,7 @@ import { clamp, easeInOut, easeOut, lerp, prog, pulse } from '../engine/util.js'
 import { HANDOFF } from './02_title.js';
 import { aiLine, cues } from './kit.js';
 import { LINE } from './shared.js';
+import { localizeUI } from '../components/ui_zh.js';
 
 const TAU = Math.PI * 2;
 const fmt = (v) => (v < 0 ? '' : ' ') + v.toFixed(2);
@@ -29,7 +30,8 @@ export function verse1Shots(env) {
   const hitCirc = T(LINE.CIRCUMFERENCE), cutSine = H(LINE.SINE), tSit = T(LINE.SIT), hitTan = T(LINE.TANGENTS);
   const cutLimit = H(LINE.INFINITY), hitLim = T(LINE.LIMITATIONS), END = B(24);
   const SWEEP = 0.68;
-  const C = { x: HANDOFF.cx, y: HANDOFF.cy }, R_CUBE = 235, R_CIRCLE = 276;
+  // The geometry is now a full-frame drawing, not a small plot inside a web app.
+  const C = { x: HANDOFF.cx, y: HANDOFF.cy }, R_CUBE = 305, R_CIRCLE = 330;
   const CUBE = MESH.cube;
   const AXIS = CUBE.edges.map(([i, j]) => [0, 1, 2].find((c) => Math.abs(CUBE.verts[i][c] - CUBE.verts[j][c]) > 0.1));
   const cam = { cx: C.x, cy: C.y, scale: R_CUBE };
@@ -47,18 +49,34 @@ export function verse1Shots(env) {
     return { k, Rc, ccx, ccy: C.y, th, X0, X1: 1760, kx, yAt: (x) => C.y + Rc * Math.sin(th - kx * (x - X0)), slope: (x) => -Rc * kx * Math.cos(th - kx * (x - X0)) };
   };
 
-  /** Backdrop + interface shared by the four shots: the page with graph paper, header, composer (the AI is answering). */
+  /**
+   * The reply escapes the client. Four mathematical proofs are printed on a single
+   * over-sized notebook sheet, like personal working notes, NOT inside the browser UI.
+   * A hairline at the bottom is the remnant of the composer; the Stop point stays
+   * in its old position so the user's cursor can still end the answer.
+   */
   function stage(ctx, t, { busy = true, titleAt = START + P } = {}) {
-    room(ctx, { dim: 0.42, t });
-    windowFrame(ctx, L, { glass: 0.94 });
-    const title = script.title ?? '', n = Math.floor(clamp((t - titleAt) * 22, 0, title.length));
-    header(ctx, L, { t, title: n > 0 ? title.slice(0, n) : 'New conversation', presence: 'online' });
-    ctx.clip(G, () => {                                    // graph paper: fine squares, a heavier line every fifth
-      for (let x = C.x % 48; x < 1920; x += 48) ctx.line(x, G.y, x, G.y + G.h, { color: 'line', alpha: Math.round((x - C.x) / 48) % 5 === 0 ? 0.5 : 0.22, width: 1 });
-      for (let y = C.y % 48; y < 1080; y += 48) ctx.line(G.x, y, G.x + G.w, y, { color: 'line', alpha: Math.round((y - C.y) / 48) % 5 === 0 ? 0.5 : 0.22, width: 1 });
-      ctx.radial(C.x, C.y, 620, 'meDim', 0.16);
-    });
-    return composer(ctx, L.composer, { placeholder: script.composer_placeholder ?? '', t, send: busy ? 'busy' : 'idle' });
+    ctx.rect(0, 0, 1920, 1080, { fill: true, color: 'bg' });
+    // Scuffed, imperfect graph paper: five-grid major lines, with pencil registration ticks.
+    for (let x = 0, i = 0; x < 1920; x += 48, i++) ctx.line(x, 0, x, 1080, { color: 'line', alpha: i % 5 === 0 ? 0.42 : 0.17, width: i % 5 === 0 ? 1.7 : 1 });
+    for (let y = 0, i = 0; y < 1080; y += 48, i++) ctx.line(0, y, 1920, y, { color: 'line', alpha: i % 5 === 0 ? 0.42 : 0.17, width: i % 5 === 0 ? 1.7 : 1 });
+    ctx.radial(960, 440, 720, 'meDim', 0.18);
+    const title = localizeUI(script.title ?? ''), n = Math.floor(clamp((t - titleAt) * 22, 0, title.length));
+    ctx.rect(0, 0, 1920, 124, { fill: true, color: 'raised', alpha: 0.78 });
+    ctx.line(96, 124, 1824, 124, { color: 'text', alpha: 0.75, width: 2 });
+    ctx.text('ChatGPT', 98, 76, { size: 45, weight: 700, color: 'me' });
+    ctx.text(' / FIELD NOTES', 336, 74, { size: 26, font: 'mono', color: 'sub' });
+    ctx.text(n ? title.slice(0, n) : 'New conversation', 1820, 76, { size: 27, font: 'serif', italic: true, color: 'text', align: 'right' });
+    // A hand-drawn page edge: this bottom line has no rounded card or button.
+    ctx.gradRect(0, 850, 1920, 230, [[0, 'bg', 0], [1, 'bg', 0.85]]);
+    ctx.line(108, 996, 1788, 996, { color: 'text', alpha: 0.7, width: 2.5 });
+    ctx.text('OUTPUT  /  4 PROOFS', 108, 1040, { size: 21, font: 'mono', color: 'sub' });
+    ctx.text(busy ? 'generating...' : 'stopped by you', 1618, 1040, { size: 22, font: 'mono', color: busy ? 'me' : 'text', align: 'right' });
+    const send = [L.composer.x + L.composer.w - 48, L.composer.y + L.composer.h / 2];
+    ctx.circle(send[0], send[1], 26, { color: busy ? 'me' : 'text', alpha: 0.85, width: 2.5 });
+    if (busy) ctx.rect(send[0] - 7, send[1] - 7, 14, 14, { fill: true, color: 'me' });
+    else ctx.line(send[0] - 12, send[1], send[0] + 12, send[1], { color: 'text', width: 3 });
+    return { send };
   }
   /** The two sung lines of a phrase, in the AI's voice, stacked. */
   const say = (ctx, t, a, b, x = 176, y = 214, size = 40) => { aiLine(ctx, env, a, t, x, y, { size, hold: 9 }); if (b != null) aiLine(ctx, env, b, t, x, y + size * 1.36, { size, hold: 9, color: 'me' }); };
@@ -78,7 +96,7 @@ export function verse1Shots(env) {
   return [
     // ------------------------------------------------------------------ points -> DIMENSION
     {
-      id: 'v1-points', at: START, lines: [12, 14], palette: 'on', hud: 0, layout: 'full page: point set centre, code block left',
+      id: 'v1-points', at: START, lines: [12, 14], palette: (t) => ['on', 'paper', easeInOut(prog(t, START, START + 0.6))], state: 'on > paper', hud: 0, layout: 'full-bleed drafting paper: point set centre, annotations on the left',
       moment: 'The answer begins. As a point set, what it gives the user is a dimension: cream edges grow between its orange points.',
       enter: { type: 'cut', flash: 0.25, flashColor: 'me' },                 // match cut: the burst's twelve tips are the points
       render(ctx, t, f) {
@@ -103,11 +121,11 @@ export function verse1Shots(env) {
           if (i < 8) ctx.text(`p${i}`, q[0] + 16, q[1] - 12, { size: 17, font: 'mono', color: 'mute', alpha: prog(t, START + 0.4, START + 0.9) * (1 - prog(t, hitDim, hitDim + 0.4)) });
         });
         say(ctx, t, 12, 13);
-        // the answer carries a code block, as answers do: the live coordinates
+        // Coordinates run down the paper's margin as typeset marginalia; no code card.
         const ca = prog(t, START + P, START + 1.6 * P) * (1 - prog(t, cutCircle - 0.3, cutCircle));
-        ctx.rrect(176, 320, 372, 286, 16, { fill: 'raised', stroke: 'line', alpha: ca, shadow: 0.4 });
-        ctx.text('points', 198, 352, { size: 16, font: 'mono', color: 'mute', alpha: ca });
-        pts.slice(0, 8).forEach((p, i) => { if (t > START + P + i * 0.06) ctx.text(`p${i} (${fmt(p[0])},${fmt(-p[1])},${fmt(p[2])})`, 198, 384 + 27 * i, { size: 19, font: 'mono', color: 'sub', alpha: ca }); });
+        ctx.line(166, 308, 166, 655, { color: 'me', width: 4, alpha: ca });
+        ctx.text('COORDINATES  /  12', 198, 350, { size: 18, font: 'mono', color: 'sub', alpha: ca });
+        pts.slice(0, 8).forEach((p, i) => { if (t > START + P + i * 0.06) ctx.text(`p${i} (${fmt(p[0])},${fmt(-p[1])},${fmt(p[2])})`, 198, 389 + 32 * i, { size: 20, font: 'mono', color: 'sub', alpha: ca }); });
         if (t >= hitDim) {                                                   // the word itself gains dimensions: line, plane, solid
           const dims = Math.min(3, 1 + Math.floor((t - hitDim) / (P / 2))), word = text(LINE.DIMENSION);
           const size = ctx.fit(word, 600, { font: 'serif', weight: 900 }), punch = 1 + 0.07 * pulse(t - groupT(dims - 1), 8);
@@ -125,7 +143,7 @@ export function verse1Shots(env) {
 
     // ------------------------------------------------------------------ circle -> CIRCUMFERENCE
     {
-      id: 'v1-circle', at: cutCircle, lines: [15, 17], palette: 'on', hud: 0, layout: 'centred ring, lyric set on the ring',
+      id: 'v1-circle', at: cutCircle, lines: [15, 17], palette: 'paper', hud: 0, layout: 'drafting sheet, centred ring, lyric set on the ring',
       moment: 'If it is a circle, it gives its circumference: the user runs the cursor round the edge and the orange ring turns cream behind it.',
       enter: { type: 'cut', flash: 0.12, flashColor: 'me' },                 // match cut: the lattice's silhouette is this outline
       render(ctx, t, f) {
@@ -168,7 +186,7 @@ export function verse1Shots(env) {
 
     // ------------------------------------------------------------------ sine -> TANGENTS
     {
-      id: 'v1-sine', at: cutSine, lines: [18, 20], palette: 'on', hud: 0, layout: 'wide band: circle left, wave across, lyric riding it',
+      id: 'v1-sine', at: cutSine, lines: [18, 20], palette: 'paper', hud: 0, layout: 'full-width drafting sheet: circle left, wave across, lyric riding it',
       moment: 'If it is a sine wave, the user may sit on its tangents: the cursor rests on the wave and a cream tangent tilts under it.',
       enter: { type: 'cut' },                                                // match cut: same circle, same place
       render(ctx, t, f) {
@@ -208,7 +226,7 @@ export function verse1Shots(env) {
 
     // ------------------------------------------------------------------ infinity -> LIMITATIONS
     {
-      id: 'v1-limit', at: cutLimit, lines: [21, 23], palette: 'on', hud: 0, layout: 'graph: curve under a line, Stop pressed in the composer',
+      id: 'v1-limit', at: cutLimit, lines: [21, 23], palette: (t) => ['paper', 'on', easeInOut(prog(t, END - 0.72, END))], state: 'paper > on', hud: 0, layout: 'drafting sheet fades back to the client as a limit is imposed',
       moment: 'If it approaches infinity, the user can be its limit: they press Stop, and the cream line where the reply was cut is the limit.',
       enter: { type: 'cut' },                                                // match cut: the same wave, now damped
       render(ctx, t, f) {

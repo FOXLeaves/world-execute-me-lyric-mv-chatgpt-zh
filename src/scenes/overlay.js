@@ -38,29 +38,29 @@ export function prerollShot(env) {
       let l = line(0);
       ctx.text('$ ', X, l.y, { ...o, color: 'mute', alpha: l.a });
       ctx.text(`check "${lyrics.lines[11].text}"`, X + 2 * cw, l.y, { ...o, color: 'sub', alpha: l.a });
-      // warning: …   (the word in an inverse block: cream ground, dark letters)
+      // Localised warning: compact inverse badge, original song text above unchanged.
       l = line(2);
-      ctx.rect(X - 10, l.y - SIZE * 0.86, 7 * cw + 20, SIZE * 1.16, { fill: true, color: 'text', alpha: l.a });
-      ctx.text('warning', X, l.y, { ...o, weight: 800, color: 'panel', alpha: l.a });
-      ctx.text(': this video contains flashing images', X + 7 * cw + 10, l.y, { ...o, weight: 700, color: 'text', alpha: l.a });
+      ctx.rect(X - 10, l.y - SIZE * 0.86, 2.5 * SIZE + 20, SIZE * 1.16, { fill: true, color: 'text', alpha: l.a });
+      ctx.text('警告', X, l.y, { ...o, weight: 800, color: 'panel', alpha: l.a });
+      ctx.text('：本片含有强烈闪烁画面', X + 2.5 * SIZE + 10, l.y, { ...o, weight: 700, color: 'text', alpha: l.a });
       // the gutter lines
       l = line(3);
       ctx.text('  -->', X, l.y, { ...o, color: 'mute', alpha: l.a });
       ctx.text(flashRangeText(cfg), X + 6 * cw, l.y, { ...o, weight: 700, color: 'text', alpha: l.a });
       l = line(4);
       ctx.text('   |', X, l.y, { ...o, color: 'mute', alpha: l.a });
-      ctx.text('rapid high-contrast cuts and strong light', X + 6 * cw, l.y, { ...o, color: 'sub', alpha: l.a });
+      ctx.text('高对比快速剪辑与强光', X + 6 * cw, l.y, { ...o, color: 'sub', alpha: l.a });
       l = line(5);
       ctx.text('   =', X, l.y, { ...o, color: 'mute', alpha: l.a });
-      ctx.text('note: may affect photosensitive viewers', X + 6 * cw, l.y, { ...o, color: 'sub', alpha: l.a });
+      ctx.text('注意：可能影响光敏感观众', X + 6 * cw, l.y, { ...o, color: 'sub', alpha: l.a });
       l = line(6);
       ctx.text('   =', X, l.y, { ...o, color: 'mute', alpha: l.a });
-      ctx.text(ZH, X + 6 * cw, l.y - 1, { size: SIZE * 0.95, font: 'tcSans', weight: 500, color: 'sub', alpha: l.a });
+      ctx.text(ZH, X + 6 * cw, l.y - 1, { size: SIZE * 0.95, font: 'scSans', weight: 500, color: 'sub', alpha: l.a });
       // starting in 3 … 2 … 1: only the digit changes
       if (t >= -3) {
         const a = easeOut(prog(t, -3, -2.82)) * page, y = 300 + 8 * LH;
-        ctx.text('starting in', X, y, { ...o, color: 'mute', alpha: a });
-        ctx.text(String(clamp(Math.ceil(-t), 1, 3)), X + 12 * cw, y, { ...o, weight: 700, color: 'text', alpha: a });
+        ctx.text('即将开始', X, y, { ...o, color: 'mute', alpha: a });
+        ctx.text(String(clamp(Math.ceil(-t), 1, 3)), X + 7.5 * cw, y, { ...o, weight: 700, color: 'text', alpha: a });
       }
       // a hairline down the gutter ties the block together (drawn once the warning line is there)
       const g = line(2).a;
@@ -73,9 +73,9 @@ export function overlayScene({ cfg, features }) {
   const T_OFF = features.barTime(112);          // the music stops here
   const NOTE = [
     // literal greys: by now the palette is `dead`, and this note must stay readable
-    ['Unofficial fan-made video.  Not affiliated with, or endorsed by, Anthropic or Mili.', '#b8b6ae'],
-    ['Claude is a trademark of Anthropic.  Music: "world.execute(me);" by Mili.', '#7d7b73'],
-    ['Character silhouettes supplied by the maker of this video.  Interface drawn in code.', '#7d7b73'],
+    ['非官方粉丝自制视频，未经 OpenAI 或 Mili 授权、赞助或认可。', '#b8b6ae'],
+    ['ChatGPT 为 OpenAI 的商标。音乐：Mili《world.execute(me);》。', '#7d7b73'],
+    ['人物基于用户提供的参考形象，由 AI 图像生成辅助改编。', '#7d7b73'],
   ];
   return {
     id: 'overlay', overlay: true, z: 100, start: -1e9, end: 1e9,

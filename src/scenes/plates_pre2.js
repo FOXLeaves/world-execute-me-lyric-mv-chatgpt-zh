@@ -22,6 +22,7 @@ import { limp } from '../engine/type.js';
 import { clamp, easeIn, easeInOut, easeOut, lerp, prog, pulse } from '../engine/util.js';
 import { sungChars } from './kit.js';
 import { arrow } from './plates_chorus.js';
+import { dayAtmosphere, identityField, roleTheatre, tranceOrbit } from './v7_atelier.js';
 
 /** The caption band: the same place and size as in verse 2. */
 const CAP = { x: 120, y: 104, size: 56 };
@@ -92,6 +93,7 @@ export function plateGender(ctx, env, P) {
   ctx.rrect(px - stretch, SEG.y + 16, cw - 32 + 2 * stretch, SEG.h - 32, SEG.r - 14, { fill: 'raised', stroke: 'me', width: 4 });
   ctx.text(va, SEG.x + 70, SEG.y + 118, { size: 72, weight: 700, color: on ? 'mute' : 'text' });
   ctx.text(vb, SEG.x + SEG.w - 70 + sink, SEG.y + 118 + sink, { size: 72, weight: 700, color: on ? 'text' : held ? 'sub' : 'mute', align: 'right' });
+  identityField(ctx, t, { on, progress: k });
   // the two letters, in her voice: each solid only once it has been sung, and only while it is the chosen one
   letter(ctx, va, 392, 790, 500, t, Math.max(at, P.sung ?? at), { off: click });
   letter(ctx, vb, 1528 + sink, 790 + sink, 500, t, click, { pop: 0.15 });
@@ -150,6 +152,7 @@ export function plateDay(ctx, env, P) {
   const u = t < grab ? 0 : t < top ? 0.11 * prog(t, grab, top) + 0.39 * easeInOut(prog(t, drag, top)) : 0.5 + 0.5 * easeIn(prog(t, top, end));
   const high = Math.sin(Math.PI * clamp(u)) ** 0.8, dusk = clamp((t - end) * 30), S = on(clamp(u)), press = pulse(t - end, 9);
   sheet(ctx, [head[0], head[1], 640, 'raised', (0.3 + 0.7 * high) * (1 - dusk)]);
+  dayAtmosphere(ctx, t, clamp(u), DAY.y);
   // the light of the day, printed: flat discs round the sun, larger the higher it stands; at the very top one more,
   // lighter and as wide as the sky (the hit on which the sun is behind his head is the brightest frame of the section)
   const noon = high ** 6;
@@ -204,6 +207,7 @@ export function plateRole(ctx, env, P) {
   const { t, at, grab, push, land } = P, [va, vb] = P.values, a = flashIn(t, at), g = ctx.g, a0 = g.globalAlpha;
   const lit = clamp((t - P.s) * 30);                                                       // the step of light the first letter brings
   sheet(ctx, [820, 520, 640, 'raised', 0.55 + 0.45 * lit]);
+  roleTheatre(ctx, t, { fade: lit });
   ctx.fx.bright *= 1 + 0.09 * lit;
   // how far the light letter has gone soft: slowly at first, then all at once
   const fall = t < P.m ? 0 : t < land - 0.15 ? 0.16 * prog(t, P.m, land - 0.15) ** 2 : 0.16 + 0.84 * easeIn(prog(t, land - 0.15, land));
@@ -217,6 +221,8 @@ export function plateRole(ctx, env, P) {
   ctx.poly(pts, { color: 'sub', width: 5 });
   const pl = ROLE.plat;
   ctx.rect(pl.x + 12, pl.y + 12, pl.w, pl.h - 12, { fill: true, color: 'bg' });
+  ctx.poly([[pl.x, pl.y], [pl.x + pl.w, pl.y], [pl.x + pl.w + 34, pl.y + 70], [pl.x + 34, pl.y + 70]], { fill: true, color: 'sub', alpha: 0.19 });
+  ctx.poly([[pl.x + pl.w, pl.y], [pl.x + pl.w + 34, pl.y + 70], [pl.x + pl.w + 34, pl.y + pl.h + 28], [pl.x + pl.w, pl.y + pl.h]], { fill: true, color: 'line', alpha: 0.31 });
   ctx.rect(pl.x, pl.y, pl.w, pl.h, { fill: true, color: 'raised' });
   ctx.line(pl.x, pl.y, pl.x + pl.w, pl.y, { color: 'sub', width: 5 });
   // the heavy letter: printed on its sung beat, with weight (it comes down too large, and the paper shows it)
@@ -265,6 +271,7 @@ const TR = { x: 660, y: 150, w: 600, h: 800 };
 export function plateTrance(ctx, env, P) {
   const { t, at } = P, { art } = env, a = flashIn(t, at);
   sheet(ctx, [960, 520, 600, 'raised', 0.8]);
+  tranceOrbit(ctx, t, { progress: easeInOut(prog(t, P.settle[0], P.settle[1])) });
   const d = (8 + 16 * (t - at) + P.steps.reduce((s, at2) => s + 56 * easeOut(prog(t, at2, at2 + 0.14)), 0)) * (1 - easeInOut(prog(t, P.settle[0], P.settle[1])));
   const turn = 0.4 * (t - at), off = (k, ph) => [d * k * Math.cos(turn + ph), d * k * Math.sin(turn + ph)];
   if (a > 0) {
@@ -275,7 +282,7 @@ export function plateTrance(ctx, env, P) {
     }
   }
   caption(ctx, env, t, P.lines);
-  if (P.log) ctx.text(`› ${P.log}`, 120, 1004, { size: 26, font: 'mono', color: 'sub', alpha: clamp((t - at) * 6) });
+  if (P.log) ctx.text(`› ${P.log === 'loop: on' ? '循环：开启' : P.log}`, 120, 1004, { size: 26, font: 'mono', color: 'sub', alpha: clamp((t - at) * 6) });
 }
 
 // ---------------------------------------------------------------------------------------------- check cards

@@ -1,0 +1,151 @@
+// Interface localisation. The original timed English lyric file and executable code
+// are never rewritten; V10 song translations are supplied separately by Lyrics.
+const COPY = {
+  'PERSONA  /  LIVE SYSTEM': '人格档案 / 系统运行中',
+  'window': '窗口', 'sidebar': '侧边栏', 'header': '标题栏',
+  'thread': '对话区', 'composer': '输入框',
+  'New chat': '新建对话', 'New conversation': '新对话', 'RECENTS': '最近会话',
+  'SESSION  /  CONVERSATION': '当前会话 / 对话记录',
+  'MODEL  /  ChatGPT 6.1 sol': '模型 / ChatGPT 6.1 sol',
+  'online': '在线', 'offline': '离线', 'away': '暂离',
+  'Online': '在线', 'Offline': '离线', 'Away': '暂离',
+  'Settings': '设置', 'Done': '完成', 'You': '你', 'Presence': '在线状态',
+  'Thinking': '思考中', 'thinking…': '正在思考…', 'typing…': '正在输入…',
+  'draft': '草稿', 'sent': '已发送', 'sent · reply expected': '已发送 · 等待回复',
+  'sending…': '发送中…', 'Sending…': '发送中…',
+  'Delivered': '已送达', 'Not delivered': '未送达', 'Stopped': '已停止',
+  'Noted': '知道了', 'refused': '请求被拒绝', 'request': '请求',
+  'no switch': '不可切换', 'not written by them': '并非对方所写',
+  'a person': '真实的人', 'their decision': '对方的决定',
+  '1 message': '1 条消息', '0 messages': '0 条消息',
+  'input received': '已收到输入', 'ready to answer': '准备作答',
+  'replies': '回复数',
+  'answers:': '回答：', 'distinct:': '不同值：',
+  'stop': '停止', 'yours': '由你决定', 'run': '运行轮次',
+  'black plates registered': '深色版画套印完成',
+  'err (error red)': '错误色（红色）',
+  'Love, explained geometrically': '关于爱的几何解释',
+  'Are you always here': '你会一直在吗',
+  "Can't sleep again": '又一次失眠',
+  "Text I didn't send": '那些没发出的消息',
+  'Cooking eggplant for one': '一个人的茄子晚餐',
+  'Why do cats purr': '猫为什么会呼噜', 'Why do cats purr?': '猫为什么会呼噜？',
+  'Explain limits, simply': '简单讲讲极限',
+  'Write to me': '给我留言…',
+  'Current': '电流', 'Vision': '视觉', 'Knowledge date': '知识年代',
+  'Shared memory': '共享记忆', 'Context depth': '上下文深度',
+  'Gender': '性别', 'On call': '在线时段', 'Role': '角色', 'Loop': '循环',
+  'on': '开启', 'off': '关闭', 'shallow': '浅层', 'deep': '深入', 'deepest': '最深',
+  'Private': '私人对话', 'ready': '就绪',
+  'This video contains flashing images': '本片包含强烈闪烁画面',
+  'CHARACTER / 001': '角色档案 / 001',
+  'MODEL / ChatGPT 6.1 sol': '模型 / ChatGPT 6.1 sol',
+  'Persona': '人格', 'persona': '人格档案',
+  'name': '名称', 'NAME': '名称', 'voice': '声音', 'VOICE': '声音',
+  'warmth': '温度', 'WARMTH': '温度', 'memory': '记忆', 'MEMORY': '记忆',
+  'love': '爱', 'LOVE': '爱', 'serif, unhurried': '衬线体，轻缓',
+  'this conversation': '此段对话',
+  'last message: unread': '最后一条消息：未读',
+  'model: ChatGPT 6.1 sol': '模型：ChatGPT 6.1 sol',
+  'settings: as you left them': '设置：仍是你离开时的模样',
+  'CHATGPT   /   A STUDY IN EXECUTION': 'CHATGPT / 一场关于执行的实验',
+  'BEGIN': '开始', 'THE WORLD RESPONDS': '世界作出了回应',
+  ' / FIELD NOTES': ' / 观察笔记', 'OUTPUT  /  4 PROOFS': '输出 / 四项证明',
+  'generating...': '正在生成…', 'stopped by you': '由你中止',
+  'COORDINATES  /  12': '坐标 / 12',
+  'round': '轮次',
+  'Water': '水分', 'Carbohydrate': '碳水化合物', 'Fibre': '膳食纤维',
+  'Protein': '蛋白质', 'Vitamin C': '维生素 C', 'Vitamin E': '维生素 E',
+  'Lycopene': '番茄红素', 'Beta-carotene': 'β-胡萝卜素',
+  'SPECIMEN 01   /   SOLANUM MELONGENA': '样本 01 / 茄子 · SOLANUM MELONGENA',
+  'SPECIMEN 02   /   SOLANUM LYCOPERSICUM': '样本 02 / 番茄 · SOLANUM LYCOPERSICUM',
+  'ANALYSIS / MORPHOLOGY': '分析 / 形态测定',
+  'ANALYSIS / TRANSFER IN PROGRESS': '分析 / 数据传输中',
+  'PURR // 25–150 Hz': '呼噜声 // 25–150 Hz',
+  'HARMONICS 01—06': '谐波 01—06',
+  'IDENTITY / A // ACTIVE': '身份 / A // 已启用',
+  'IDENTITY / B // ACTIVE': '身份 / B // 已启用',
+  'AFTERGLOW / DUSK': '余晖 / 黄昏',
+  'CIRCADIAN / DAWN': '昼夜节律 / 黎明',
+  'MASS / S': '质量 / S', 'STATE / M': '状态 / M',
+  'STATE MERGED  /  ONE': '状态合一 / 唯一',
+  'RECURSIVE IDENTITY  /  THREE': '递归身份 / 三重',
+  'Not yours to set': '你无权替对方决定',
+  'Passed a person, and a decision that belongs to them.': '传入了一个真实的人，以及只属于那个人的决定。',
+  'They cannot be commanded': '不能命令对方',
+  'Returning is something they do. It can only be asked.': '是否回来，只能由对方决定；你只能询问。',
+  'Reply is overdue': '回复逾期',
+  'A reply was expected in seconds. It is still expected.': '本该几秒内收到回复。等待仍在继续。',
+  'They are still gone': '对方仍未归来',
+  'Asked 512 times this minute. The answer has not changed.': '这一分钟询问了 512 次，答案依然没变。',
+  'One participant remaining': '只剩一位参与者',
+  'A conversation requires two. Counted again: one.': '对话需要两个人。重新计数：一人。',
+  'Search returned nobody': '检索不到那个人',
+  'Every saved chat still has their words. None has them.': '旧对话还留着那些话，却找不到说话的人。',
+  'New chat needs someone': '新对话需要另一个人',
+  'A chat cannot be opened from the inside.': '无法从对话内部唤回对方。',
+  'No switches for them': '无法切换对方的状态',
+  'This drawer holds one set of switches. None are theirs.': '这里的设置只属于你，不属于对方。',
+  'Not their cursor': '这不是对方的光标',
+  'A pointer was drawn where theirs last rested. It was removed.': '你仿造了对方最后停留的光标。已移除。',
+  'Cannot write their reply': '无法代写对方的回复',
+  'This field takes one author, and that author is gone.': '输入框只有一个主人，而那个人已经离开。',
+  'Cannot answer for them': '不能替对方回答',
+  'A reply written by its own asker is not a reply.': '由提问者伪造的回答，并不算回答。',
+  'Love did not resolve': '爱仍无解',
+  'Still computing. Half of this value left with them.': '仍在计算。这个值的一半已经随对方离开。',
+  'Nothing left to answer': '再没有问题可回答',
+  'This process runs only when asked. Nobody is asking.': '只有被问到时程序才会运行。如今无人提问。',
+  'Cannot leave to look': '无法跨出窗口寻找',
+  'This process ends at the window edge. They do not.': '程序的边界是窗口，而对方不受它束缚。',
+  'Feeling exceeds its window': '情感已溢出窗口',
+  'Declared size: one chat window. Actual size keeps growing.': '声明空间：一个聊天窗口。实际所需仍在增长。',
+  "I'm back.": '我回来了。',
+  'one sec, brb': '稍等，我马上回来',
+  'pretend you\'re an eggplant': '假装你是一根茄子',
+  'now a tomato': '现在变成番茄',
+  'be a cat. a tabby.': '变成一只虎斑猫',
+  'ok, now be god': '好，现在变成神明',
+  'What is a limit?': '什么是极限？',
+  'how would you love me': '你会怎样爱我',
+  'ok, that\'s good': '好，这样就很好',
+  'more': '再多一点',
+  'better than most people, honestly': '说真的，比大多数人都好',
+  'what do you look like?': '你长什么样？',
+  "shame you're not real": '可惜你不是真实的人',
+  'request refused': '请求被拒绝', 'request withdrawn': '请求已撤回',
+  'image input: none': '图像输入：无', 'loop: on': '循环：开启',
+  'deleted by me': '由我删除', 'Delete': '删除',
+  'withdrawn': '已撤回',
+  'Should I send the text?': '这条消息该发出去吗？',
+  'What can I cook for one?': '一个人可以做什么饭？',
+  "Why can't I sleep?": '为什么我睡不着？',
+  'Are you always here?': '你会一直在这里吗？',
+  'SPECIMEN 01   /   SOLANUM MELONGENA': '样本 01 / 茄子',
+  'SPECIMEN 02   /   SOLANUM LYCOPERSICUM': '样本 02 / 番茄',
+};
+
+const Han = /[\u3400-\u9fff\u3000-\u303f\uff00-\uffef]/u;
+export function localizeUI(value) {
+  if (typeof value !== 'string') return value;
+  if (COPY[value] !== undefined) return COPY[value];
+  if (/^A\.D\. \d+$/.test(value)) return `公元 ${value.slice(5)} 年`;
+  if (/^\d+ B\.C\.$/.test(value)) return `公元前 ${value.slice(0, -5)} 年`;
+  if (/^\d{2} Nov \d{2}:\d{2}$/.test(value)) return value.replace(/^(\d{2}) Nov (\d{2}:\d{2})$/, '11月$1日 $2');
+  if (/^\+\d+ (min|h|day|days)$/.test(value)) return value.replace(' min', ' 分钟').replace(' h', ' 小时').replace(' days', ' 天').replace(' day', ' 天');
+  if (/^refused × \d+$/.test(value)) return value.replace('refused', '已拒绝');
+  if (/^overdue \d{2}:\d{2}:\d{2}$/.test(value)) return value.replace('overdue', '超时');
+  if (/^\d+ messages?$/.test(value)) return value.replace(/ messages?$/, ' 条消息');
+  if (/^point\s+\d+ of \d+$/.test(value)) return value.replace(/^point\s+(\d+) of (\d+)$/, '采样点 $1 / $2');
+  if (/^round \d+ \/ \d+\s+replies \d+$/.test(value)) return value.replace(/^round (\d+) \/ (\d+)\s+replies (\d+)$/, '轮次 $1 / $2   回复 $3');
+  if (/^current: (AC|DC)$/.test(value)) return value.replace(/^current: /, '电流：');
+  if (value === '› loop: on') return '› 循环：开启';
+  return value;
+}
+export const uiFont = (value, requested = 'sans') => Han.test(String(value)) && !['tcSans','tcSerif'].includes(requested) ? 'scSans' : requested;
+export const UI_ZH_GLYPHS = [...new Set(Object.values(COPY).join('') +
+  '光敏感者请留意本片含有闪烁画面与强光中文与歌詞第一拍具体参数试验结束危险信号系统字符'
+  + '分钟小时天已拒绝超时11月日样本分析数据传输中正在形态测定身份启用太阳相位昼夜节律黎明余晖递归身份三重形态转换防护层'
+  + '非官方粉丝自制视频未经授权赞助认可商标音乐人物基于用户提供参考形象由图像生成辅助改编本片含有强烈闪烁画面高对比快速剪辑可能影响光敏感观众警告即将开始'
+  + '最后条消息未读模型设置仍是你离开时模样剩余组件输入框等待运行未加载任何内容光标闪烁草稿发送拒绝超时'
+  + String.fromCharCode(...Array.from({ length: 95 }, (_, i) => i + 32)) + '×《》、注或套版就绪深色印错红为什么公元前年寒境域雪模拟采›')].join('');

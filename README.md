@@ -1,8 +1,14 @@
-# world.execute(me); — 歌詞 MV · Lyric MV
+# world.execute(me); — ChatGPT Edition · 歌詞 MV / Lyric MV
+
+> **当前升级：ChatGPT Cinematic V11 · 中文字幕字距修正版 · ChatGPT 6.1 sol。** 在 V10 全片 **129 行简体中文歌词**基础上修复了片头大字（如“防护措施”“创造万物”“初始化”“模拟世界”）的汉字重叠：原排版使用英文字母 0.6em 的等宽步距，新版根据实际汉字字宽及字间距逐字居中排列。V10 的 87 个镜头、中文歌词与分拍动画、角色、音乐及全部时间点保持不变。原英文 LRC、`data/lyrics.json` 也未修改，画面仍从 `data/lyrics_zh.json` 读取中文字幕。左下角用户名为「寒境域雪」，模型为 `ChatGPT 6.1 sol`；代码表达式及错误码保留其编程语义。详见 [中文使用说明](CHATGPT_EDITION_使用说明.md)，Windows 一键导出仍使用 `export_1080p60.cmd`。
+
+> **改编版 · Adapted edition.** 这个版本已将画面里的 AI 身份替换为 **ChatGPT**，并使用用户提供的白发龙角少女设定重制八张绿色 / 象牙白 / 深墨色人物版画。原版的镜头、节奏与剧情结构不变。`DESIGN.md` 是新版视觉规则；`docs/v3/`、`docs/v4/` 是原作者的历史制作记录。下方的原版 4K / 闪光测试结果**尚未在改编版上重新认证**。
+>
+> This adapted build features ChatGPT and the user-supplied white-haired dragon character. The original production documents remain as historical records. Original test results below have **not** been re-certified for this edition.
 
 非官方同人作品 · an unofficial fan work
 
-![封面 / cover](docs/images/cover.jpg)
+![ChatGPT Cinematic V11 / V7 character art base](docs/images/cover-chatgpt-v6.jpg)
 
 **影片 / Video:** [Bilibili](https://www.bilibili.com/video/BV186pc65E68)　|　**[中文](#中文)**　|　**[English](#english)**　|　**[提示詞 / Prompts](docs/README.md)**
 
@@ -11,13 +17,12 @@
 >
 > 製作者給 AI 的要求全部公開在 [`docs/`](docs/README.md):[第四版的完整提示詞](docs/v4/PROMPT_v4.md)(約 2.3 萬字)、
 > [修復輪的提示詞](docs/v4/PROMPT_v4_fix.md),以及[每一輪實際做了什麼的紀錄](docs/v4/PROGRESS.md)。
-> 兩份提示詞也可以在 [Releases](../../releases/latest) 單獨下載。用它們或源碼發布影片時,請照[這裡的格式](#用本項目發布影片)註明出處。
+> 兩份提示詞也可以在 [Releases](../../releases/latest) 單獨下載。
 >
 > Everything the maker asked the AI for is public in [`docs/`](docs/README.md): the [full prompt of version 4](docs/v4/PROMPT_v4.md)
 > (about 23,000 Chinese characters), the [prompt of the fix round](docs/v4/PROMPT_v4_fix.md), and the
 > [log of what was actually built](docs/v4/PROGRESS.md). They are written in Chinese; [`docs/README.md`](docs/README.md) says in
 > English what each file contains. The two prompt files can also be downloaded on their own from [Releases](../../releases/latest).
-> If you publish a video made with them or with the code, please credit it as described [here](#publishing-a-video-made-with-this-project).
 
 > [!WARNING]
 > **閃光警告 · PHOTOSENSITIVITY WARNING**
@@ -39,11 +44,11 @@
 ### 這是什麼
 
 Mili《world.execute(me);》的歌詞 MV 渲染工程,**第四版**。整支影片是一場對話:
-「我」是 Claude 的擬人角色(橙),「你」是螢幕另一端不露臉的使用者(米白,只以游標、輸入、訊息、在線狀態出現)。
+「我」是 ChatGPT 的擬人角色(綠色,以使用者提供的白髮龍角少女為基礎),「你」是螢幕另一端不露臉的使用者(米白,只以游標、輸入、訊息、在線狀態出現)。
 歌詞幾乎都是 AI 發出的訊息。畫面有三種:
 
 - **介面**:使用者看到的對話,用程式碼畫出來的聊天介面。
-- **版畫**:AI 心裡的意思與感受。全屏、暗色暖調帶紋理的紙底,只用三種平塗墨色(橙、米白、近黑)的圖形、程式符號畫、剪影與大字。
+- **版畫**:AI 心裡的意思與感受。全屏、暗色帶紋理的紙底,只用三種平塗墨色(ChatGPT 綠、米白、近黑)的圖形、程式符號畫、剪影與大字。
 - **程式碼**:只在 EXECUTION 段,純程式碼與終端。
 
 整支影片不是剪輯出來的:每一幀都只由歌曲時間決定,在瀏覽器裡(Canvas 2D + WebGL2)畫出來,再由無頭 Chrome 逐幀送進 ffmpeg 導出。
@@ -80,15 +85,18 @@ Mili《world.execute(me);》的歌詞 MV 渲染工程,**第四版**。整支影�
    npm run preview
    ```
 
-4. 瀏覽器開啟 http://localhost:5173/ ,按 play。沒有音檔時畫面仍可無聲播放,頁面下方的 `sound` 一行會說明原因。
+4. 瀏覽器通常開啟 http://127.0.0.1:5173/（若該端口被佔用或被 Windows 拒絕，會自動改用可用端口；以命令窗口印出的 `preview:` 網址為準），按 play。沒有音檔時畫面仍可無聲播放,頁面下方的 `sound` 一行會說明原因。
+   尚未準備歌詞時也可先執行 `npm run preview:demo`，以清楚標註的測試文字預覽 ChatGPT 畫面；這不是可發布的正式歌詞版。
 5. 導出影片:`npm run export:preview`(1080p60)或 `npm run export:4k`(4K60),輸出在 `out/`。
+
+**尚未提供正式歌詞時：**可以執行 `npm run export:demo-sample` 製作一段含音頻、標示為測試文字的 20 秒技術預覽。正式影片導出會拒絕 `DEMO` 佔位歌詞，避免把測試文字誤當成完成品；請先把自己的 `.lrc` 或 `.txt` 放到 `音頻&歌詞/`，再執行 `npm run lyrics`。只有刻意加上 `--allow-demo`，才能在影片模式中導出測試文字。
 
 `ffmpeg` 由 `ffmpeg-static` 提供(`node_modules/ffmpeg-static/ffmpeg.exe` 不存在時執行一次 `node node_modules/ffmpeg-static/install.js`)。
 Python 只有重新分析音頻與檢查導出檔時才需要,見下方「檢查工具用的 Python 環境」。
 
 ### 提示詞與製作過程
 
-這支影片的程式碼由 AI(Claude,經 Claude Code)撰寫;方向、素材與每一輪的審片意見來自製作者。來回的文件全部在 [`docs/`](docs/README.md):
+原工程由原製作者使用 Claude Code 輔助開發;本 ChatGPT 改編版保留原工程的敘事與渲染結構,另行替換品牌、人物素材、配色與片尾資訊。原版的往來文件仍在 [`docs/`](docs/README.md):
 
 | 想看什麼 | 在哪裡 |
 | --- | --- |
@@ -100,32 +108,11 @@ Python 只有重新分析音頻與檢查導出檔時才需要,見下方「檢查
 
 提示詞是製作過程的紀錄,不是一鍵復現的配方:第四版的提示詞是在第三版已經存在的前提下寫的。
 
-### 用本項目發布影片
-
-歡迎拿去做你自己的版本。發布時請在簡介裡寫明你用了什麼(源碼、提示詞,或兩者),並附上原影片與倉庫的連結。
-可以直接複製下面這段改一改(影片裡沒有用到角色剪影,就刪掉第四行):
-
-```text
-本视频使用了开源项目 world-execute-me-lyric-mv 的【源码 / 提示词】
-仓库:https://github.com/Nyankomintsu/world-execute-me-lyric-mv
-原视频:https://www.bilibili.com/video/BV186pc65E68
-角色剪影 © Nyankomint,CC BY-NC-SA 4.0
-原曲:Mili《world.execute(me);》;本视频含 AI 生成内容
-```
-
-哪些是授權本身的要求,哪些只是請求:
-
-- **畫面是用本項目的源碼渲染的**:片中到處是角色剪影,它們是 CC BY-NC-SA 4.0,所以署名(Nyankomint)、註明授權、不得商用是授權本身的要求;
-  改動了剪影就註明改過,改編的部分以同樣的授權分享。
-- **只參考了提示詞,畫面是自己做的**:沒有法律上的要求,單純希望你照上面的格式註明出處。
-- **轉載程式碼或文件本身**(例如把提示詞全文貼到別處):保留 [LICENSE](LICENSE) 裡的版權聲明,這是 MIT 的要求。
-- **歌曲**:不論哪一種,都請遵守 [Mili 官方的著作權指引](https://projectmili.com/copyright-guidelines):個人、非商業,並標示含 AI 生成內容。
-
 ### 聲明與授權
 
-- 非官方同人作品,與 Mili、Anthropic 均無關,未獲其授權或背書;Claude 是 Anthropic 的商標。介面全部以程式碼繪製,未使用截圖。
+- 非官方同人作品,與 Mili、OpenAI 均無關,未獲其授權或背書;ChatGPT 是 OpenAI 的商標。介面全部以程式碼繪製,未使用截圖。
 - **含 AI 生成內容**:程式碼與文件由 AI 撰寫,角色剪影是製作者以 AI 圖像生成工具製作的。
-- 程式碼與本項目自己撰寫的文件:MIT,見 [LICENSE](LICENSE)。角色剪影(`assets/character/`)與含有它們的畫面:CC BY-NC-SA 4.0(署名:Nyankomint)。
+- 程式碼與本項目自己撰寫的文件:MIT,見 [LICENSE](LICENSE)。角色剪影(`assets/character/`)與含有它們的畫面:CC BY-NC-SA 4.0。
 - 歌曲與歌詞屬於 Mili 及相關權利人,不在本倉庫內,也不在上述授權之內。由本工程導出的影片含有原曲,
   分享時請遵守 [Mili 官方的著作權指引](https://projectmili.com/copyright-guidelines)(個人、非商業;標示含 AI 生成內容)。
 - 原曲、角色圖、字體與各項授權的完整說明:[CREDITS.md](CREDITS.md)。
@@ -137,13 +124,13 @@ Python 只有重新分析音頻與檢查導出檔時才需要,見下方「檢查
 ### What this is
 
 The render project of a lyric video for Mili's "world.execute(me);", **version 4**. The whole film is one conversation:
-"I" is a personification of Claude (orange); "you" is the user on the other side of the screen, who never shows a face
+"I" is a personification of ChatGPT (green, based on the user-supplied white-haired dragon girl); "you" is the user on the other side of the screen, who never shows a face
 (cream: only a cursor, typing, messages and an online status). Almost every lyric line is a message sent by the AI.
 There are three kinds of pictures:
 
 - **Interface**: the conversation as the user sees it, a chat client drawn entirely in code.
-- **Plates**: what the AI means and feels. Full-screen prints on dark, warm, textured paper, in three flat inks only
-  (orange, cream, near-black): shapes, pictures made of code glyphs, silhouettes and large type.
+- **Plates**: what the AI means and feels. Full-screen prints on dark textured paper, in three flat inks only
+  (ChatGPT green, cream, near-black): shapes, pictures made of code glyphs, silhouettes and large type.
 - **Code**: only in the EXECUTION section, nothing but code and a terminal.
 
 Nothing here is edited footage. Every frame depends on the song time alone: it is drawn in the browser (Canvas 2D + WebGL2)
@@ -183,7 +170,8 @@ The project was made and tested on Windows 11 only.
    npm run preview
    ```
 
-4. The browser opens http://localhost:5173/ : press play. Without an audio file the picture still plays, silently; the `sound` line under the picture says why.
+4. The browser normally opens http://127.0.0.1:5173/ (or another available port if Windows denies that one; use the `preview:` URL printed in the console): press play. Without an audio file the picture still plays, silently; the `sound` line under the picture says why.
+   To inspect the new visuals without lyrics, run `npm run preview:demo` instead. It uses clearly marked dummy text and is not a publishable music-video version.
 5. Export a video: `npm run export:preview` (1080p60) or `npm run export:4k` (4K60); the files go to `out/`.
 
 `ffmpeg` comes from `ffmpeg-static` (if `node_modules/ffmpeg-static/ffmpeg.exe` is missing, run `node node_modules/ffmpeg-static/install.js` once).
@@ -191,8 +179,7 @@ Python is needed only to re-analyse the audio and to check an exported file.
 
 ### Prompts and how it was made
 
-The code of this film was written by AI (Claude, through Claude Code); the direction, the material and the review notes of
-every round came from the maker. All the documents that went back and forth are in [`docs/`](docs/README.md):
+The original code was developed with Claude Code under the original maker's direction. This derivative ChatGPT edition replaces the character, on-screen brand and palette while retaining the renderer. Historical production documents are in [`docs/`](docs/README.md):
 
 | What you are looking for | Where it is |
 | --- | --- |
@@ -205,37 +192,12 @@ every round came from the maker. All the documents that went back and forth are 
 The prompts and the build log are in Chinese. They are a record of how the film was made, not a one-shot recipe:
 the prompt of version 4 was written when version 3 already existed.
 
-### Publishing a video made with this project
-
-You are welcome to make your own version. When you publish it, please say in the description what you used (the source code,
-the prompts, or both) and link the original video and this repository. You can copy this and adjust it (drop the fourth line
-if your video does not use the character silhouettes):
-
-```text
-Made with the [source code / prompts] of world-execute-me-lyric-mv
-Repository: https://github.com/Nyankomintsu/world-execute-me-lyric-mv
-Original video: https://www.bilibili.com/video/BV186pc65E68
-Character silhouettes © Nyankomint, CC BY-NC-SA 4.0
-Song: "world.execute(me);" by Mili. Contains AI-generated content.
-```
-
-What the licences require, and what is only a request:
-
-- **Pictures rendered with the source code of this project**: the character silhouettes are all over the film and are licensed
-  CC BY-NC-SA 4.0, so credit (Nyankomint), naming the licence and non-commercial use are required by that licence; if you
-  changed the silhouettes, say so, and share the adapted material under the same licence.
-- **Only the prompts, with pictures of your own**: there is no legal requirement; this is simply a request to credit as above.
-- **Copying the code or the documents themselves** (for example, reposting the full text of a prompt): keep the copyright
-  notice in [LICENSE](LICENSE), as MIT requires.
-- **The song**: in every case, please follow [Mili's copyright guidelines](https://projectmili.com/copyright-guidelines):
-  personal, non-commercial, and mark AI-generated content.
-
 ### Notices and licences
 
-- Unofficial fan work. Not affiliated with, or endorsed by, Mili or Anthropic. Claude is a trademark of Anthropic.
+- Unofficial fan work. Not affiliated with, or endorsed by, Mili or OpenAI. ChatGPT is a trademark of OpenAI.
   The interface is drawn entirely in code; no screenshots are used.
 - **Contains AI-generated content**: the code and the documents were written by AI, and the character silhouettes were made by the maker with an AI image generator.
-- Code and the documents written for this project: MIT, see [LICENSE](LICENSE). Character silhouettes (`assets/character/`) and pictures that contain them: CC BY-NC-SA 4.0 (credit: Nyankomint).
+- Code and the documents written for this project: MIT, see [LICENSE](LICENSE). Character silhouettes (`assets/character/`) and pictures that contain them: CC BY-NC-SA 4.0.
 - The song and its lyrics belong to Mili and the respective rights holders. They are not in this repository and not covered by the licences above.
   A video exported from this project contains the original song: share it only as [Mili's copyright guidelines](https://projectmili.com/copyright-guidelines) allow
   (personal, non-commercial; mark AI-generated content).
@@ -256,7 +218,7 @@ What the licences require, and what is only a request:
 ```bash
 npm run preview
 ```
-開啟 http://localhost:5173/ :與音頻同步播放,可拖動進度條(從 −5 秒的警告頁開始);畫面下方顯示目前的**鏡頭 id、顏色狀態、以及它是對話裡的哪個時刻**。
+開啟命令窗口印出的 `preview:` 網址(預設 http://127.0.0.1:5173/，端口不可用時會自動換號):與音頻同步播放,可拖動進度條(從 −5 秒的警告頁開始);畫面下方顯示目前的**鏡頭 id、顏色狀態、以及它是對話裡的哪個時刻**。
 `?t=150` 直接跳到歌曲的某一秒,`?w=1920&h=1080` 以 1080p 預覽。空白鍵播放 / 暫停,←/→ 跳 1 秒,`,` `.` 逐幀。
 開啟時畫面上有載入進度(設定、分析資料、字體、剪影、鏡頭,一項一格);畫面下方的 `sound` 一行顯示聲音的狀態。
 聲音放不出來時(沒有音檔、瀏覽器不讓它開始、音頻一直沒有前進)畫面不會停住:預覽改以無聲繼續,並在 `sound` 一行寫明原因;
@@ -418,7 +380,7 @@ export/           server.mjs(靜態伺服器)、export.mjs(無頭 Chrome → ffm
 | `ash` | 灰,留一點橙 | 192.34 秒起 |
 | `dead` | 熄滅 | 最後的斷電 |
 
-全片固定:**橙 = 我,米白 = 你,紅 = 錯誤,灰 = 缺席。** 唯一的例外是主歌二的茄子與番茄:各用自己的顏色,作為那一張版畫多印的一個專色版
+全片固定:**綠 = 我(ChatGPT),米白 = 你,紅 = 錯誤,灰 = 缺席。** 唯一的例外是主歌二的茄子與番茄:各用自己的顏色,作為那一張版畫多印的一個專色版
 (`config.json → spot`),只在物件主體上,隨版畫結束而消失。
 
 **字體分工**:等寬體 = 系統與程式碼;襯線體 = AI 說的話;無襯線體 = 介面與使用者。
@@ -502,7 +464,7 @@ export/           server.mjs(靜態伺服器)、export.mjs(無頭 Chrome → ffm
 ## 授權
 
 - 程式碼與本項目自己撰寫的文件:MIT,見 [LICENSE](LICENSE)。
-- 角色剪影(`assets/character/`)與含有它們的畫面:CC BY-NC-SA 4.0(署名:Nyankomint)。
+- 角色剪影(`assets/character/`)與含有它們的畫面:CC BY-NC-SA 4.0。
 - 歌曲與歌詞屬於 Mili 及相關權利人,不在本倉庫內,也不在上述授權之內;由本工程導出的影片含有原曲,
   分享時請遵守 [Mili 官方的著作權指引](https://projectmili.com/copyright-guidelines)(個人、非商業;標示含 AI 生成內容)。
-- Claude 是 Anthropic 的商標。各項的完整說明見 [CREDITS.md](CREDITS.md)。
+- ChatGPT 是 OpenAI 的商標。原版來源、歷史商標及其他授權的完整說明見 [CREDITS.md](CREDITS.md)。

@@ -55,7 +55,7 @@ export function bootShots(env) {
           g.setLineDash([]);
           const e = enter(t, tProt, 0, { dur: 0.3 });
           ctx.rrect(C.x - 330, C.y + 150 + e.dy, 660, 76, 20, { fill: 'raised', stroke: 'line', alpha: e.a, shadow: 0.6 });
-          ctx.text(`${text(2).toLowerCase()} layer`, C.x - 296, C.y + 198 + e.dy, { size: 27, font: 'mono', color: 'sub', alpha: e.a });
+          ctx.text('防护层', C.x - 296, C.y + 198 + e.dy, { size: 27, font: 'mono', color: 'sub', alpha: e.a });
           ctx.rrect(C.x + 230, C.y + 169 + e.dy, 70, 38, 19, { fill: 'line', alpha: e.a });
           ctx.rrect(C.x + 230, C.y + 169 + e.dy, 70, 38, 19, { fill: 'text', alpha: e.a * easeOut(prog(t, tProt + 0.12, tProt + 0.3)) });
           ctx.circle(C.x + 249 + 32 * easeBack(prog(t, tProt + 0.12, tProt + 0.34)), C.y + 188 + e.dy, 14, { fill: true, color: 'bg', alpha: e.a });
@@ -107,37 +107,57 @@ export function bootShots(env) {
 
     // ------------------------------------------------------------------ parameters → initialization
     {
-      id: 'boot-params', at: B(4), lines: [6, 7], palette: 'off', layout: 'close-up: persona card left, loader right',
-      moment: 'The persona card is filled in field by field; the last field, love, stays undefined. Then it initialises.',
+      id: 'boot-params', at: B(4), lines: [6, 7], palette: 'off', layout: 'character construction sheet: her print fills the right; parameters are handwritten on the left, no UI panel',
+      moment: 'Before there can be a ChatGPT conversation, someone draws the girl into being. Each parameter is written beside an anatomical guide line, but love stays undefined. The knot at her shoulder initialises.',
       enter: { type: 'zoom', dur: P, x: 0.5, y: 0.5 },
-      camera: (t) => ({ zoom: 1.16 + 0.04 * prog(t, B(4), B(6)), x: lerp(-170, 60, easeInOut(prog(t, T(7) - 0.15, T(7) + 0.35))), y: -8 }),
+      camera: (t) => ({ zoom: 1.01 + 0.025 * prog(t, B(4), B(6)), x: 16 * prog(t, B(4), B(6)), y: -8 }),
       render(ctx, t, f) {
         const tInit = T(7), init = prog(t, tInit, tInit + 0.9);
-        room(ctx, { dim: 0.45, t });
-        figure(ctx, 0.55);
-        windowFrame(ctx, L, { glass: 0.86 });
-        sidebar(ctx, L, { t, loaded: 0, items: script.sidebar ?? Array(6).fill('') });
-        header(ctx, L, { t, loaded: 0, title: '' });
-        const r = { x: 470, y: 160, w: 760, h: 700 }, b = card(ctx, r, { title: 'persona', subtitle: text(6).toLowerCase(), tag: 'setup', k: prog(t, B(4) - 0.1, B(4) + 0.25) });
-        if (b) {
-          const rows = [['name', 'Claude', 'serif'], ['voice', 'serif, unhurried', 'serif'], ['warmth', null, null], ['memory', 'this conversation', 'sans'], ['love', 'undefined', 'mono']];
-          rows.forEach(([label, value, font], i) => {
-            const t0 = B(4) + P * 0.5 + i * P, e = enter(t, t0, 0, { dur: 0.28, rise: 20 }), y = b.y + 22 + i * 104 + e.dy;
-            if (e.a <= 0) return;
-            ctx.text(label, b.x, y + 38, { size: 25, weight: 500, color: 'sub', alpha: e.a });
-            ctx.rrect(b.x + 190, y, b.w - 190, 64, 16, { fill: 'bg', stroke: i === 4 ? 'sub' : 'line', alpha: e.a });
-            if (value) {
-              const n = Math.floor(clamp((t - t0 - 0.12) * 26, 0, value.length)), last = i === 4;
-              ctx.text(value.slice(0, n), b.x + 214, y + 42, { size: 29, font, italic: i === 1, color: last ? 'sub' : 'text', alpha: e.a });
-              if (n < value.length || (last && Math.floor(t * 2.5) % 2 === 0)) ctx.rect(b.x + 217 + ctx.measure(value.slice(0, n), { size: 29, font, italic: i === 1 }), y + 16, 3, 32, { fill: true, color: 'text', alpha: e.a });
-            } else slider(ctx, { x: b.x + 216, y, w: b.w - 256, h: 64 }, 0.62 * easeOut(prog(t, t0 + 0.1, t0 + 0.7)), { fill: 'sub', alpha: e.a });
-          });
+        const k = easeOut(prog(t, B(4), B(4) + 0.7));
+        room(ctx, { dim: 0.67, light: [1450, 530], motif: 0, t });
+        // Two sheets of printing ink, slightly out of register while her outline settles.
+        art.inks(ctx, 'f_bust', { x: 965, y: -86, w: 1050, h: 1400 }, {
+          alpha: 0.7 * k, roles: { cream: 'text', orange: 'sub', black: 'panel' },
+          offset: { orange: [-10 * (1 - k), 0], black: [7 * (1 - k), 0] },
+          keyline: { color: 'sub', width: 1.1, alpha: 0.25 },
+        });
+        ctx.gradRect(800, 0, 620, 1080, [[0, 'bg', 0.95], [1, 'bg', 0]], 'h');
+        ctx.text('CHARACTER / 001', 115, 107, { size: 24, font: 'mono', color: 'sub', alpha: k });
+        ctx.text('MODEL / ChatGPT 6.1 sol', 555, 107, { size: 23, font: 'mono', color: 'sub', alpha: k });
+        ctx.text('Persona', 110, 226, { size: 130, font: 'serif', weight: 900, color: 'text', alpha: k });
+        ctx.text(text(6).toUpperCase(), 116, 269, { size: 25, font: 'mono', color: 'mute', alpha: k });
+        ctx.line(112, 295, 970, 295, { color: 'sub', width: 2, alpha: 0.55 * k });
+        // Five data fields read as annotations leading towards the person being constructed.
+        const rows = [['name', 'ChatGPT', 'sans'], ['voice', '衬线体，轻缓', 'serif'], ['warmth', '0.62', 'mono'], ['memory', '此段对话', 'sans'], ['love', 'undefined', 'mono']];
+        rows.forEach(([label, value, font], i) => {
+          const t0 = B(4) + P * 0.5 + i * P, e = enter(t, t0, 0, { dur: 0.32, rise: 16 });
+          if (e.a <= 0) return;
+          const y = 357 + 122 * i + e.dy, isLove = i === 4;
+          ctx.text(`0${i + 1}`, 116, y + 5, { size: 20, font: 'mono', color: 'mute', alpha: e.a });
+          ctx.text(label.toUpperCase(), 182, y + 5, { size: 24, font: 'mono', color: 'sub', alpha: e.a });
+          const n = Math.floor(clamp((t - t0 - 0.12) * 24, 0, value.length));
+          ctx.text(value.slice(0, n), 185, y + 57, { size: isLove ? 35 : 39, font, weight: isLove ? 700 : 400, italic: i === 1, color: isLove ? 'mute' : 'text', alpha: e.a });
+          if (n < value.length || (isLove && Math.floor(t * 3) % 2 === 0)) {
+            const w = ctx.measure(value.slice(0, n), { size: isLove ? 35 : 39, font, weight: isLove ? 700 : 400, italic: i === 1 });
+            ctx.rect(188 + w, y + 22, 3, 39, { fill: true, color: 'text', alpha: e.a });
+          }
+          const end = isLove ? 930 : 735 + i * 44;
+          ctx.line(185, y + 81, end, y + 81, { color: isLove ? 'mute' : 'line', width: isLove ? 2.5 : 1.5, alpha: e.a * 0.75 });
+          if (i < 4) ctx.circle(end, y + 81, 4, { fill: true, color: 'sub', alpha: e.a });
+        });
+        // Calibration marks belong to the illustration, not to a fake software settings card.
+        for (const [x, y] of [[1190, 220], [1780, 370], [1210, 840]]) {
+          ctx.circle(x, y, 22, { color: 'sub', alpha: 0.4 * k, width: 1.5 });
+          ctx.line(x - 34, y, x + 34, y, { color: 'sub', alpha: 0.35 * k });
+          ctx.line(x, y - 34, x, y + 34, { color: 'sub', alpha: 0.35 * k });
         }
         if (init > 0) {                                              // the loader is the film's motif: twelve petals, one after another
-          const x = 1500, y = 440, a = clamp(init * 5);
-          ctx.radial(x, y, 330, 'raised', 0.9 * a);
-          spark(ctx, x, y, 190, { lit: init, color: 'text', off: 'mute', alpha: a });
-          ctx.text(`${String(Math.round(init * 100)).padStart(3, ' ')}%`, x, y + 286, { size: 34, font: 'mono', color: 'sub', align: 'center', alpha: a });
+          const x = 1630, y = 760, a = clamp(init * 5);
+          ctx.radial(x, y, 280, 'raised', 0.65 * a);
+          spark(ctx, x, y, 95, { lit: init, color: 'text', off: 'mute', alpha: a });
+          ctx.circle(x, y, 148, { color: 'sub', alpha: a * 0.55, width: 1.5 });
+          ctx.circle(x, y, 148, { color: 'text', a0: -Math.PI / 2, a1: -Math.PI / 2 + init * Math.PI * 2, alpha: a, width: 5 });
+          ctx.text(`${String(Math.round(init * 100)).padStart(3, ' ')}%`, x, y + 214, { size: 31, font: 'mono', color: 'text', align: 'center', alpha: a });
         }
         ctx.camera();                                                // screen space from here
         keyBand(ctx, t, 7, 950, 112);
@@ -164,7 +184,7 @@ export function bootShots(env) {
         spark(ctx, cx, cy - 20 + e.dy, 84, { lit: 0, off: 'mute', offAlpha: 0.9, alpha: e.a, rot: 0.08 * (t - B(6)) });
         const c2 = enter(t, B(6) + 2 * P, 0, { dur: 0.45 });
         composer(ctx, { ...L.composer, y: 610 + c2.dy }, { placeholder: script.composer_placeholder ?? '', t, k: c2.raw, send: 'off' });
-        if (sim > 0) pill(ctx, L.head.x + L.head.w - 34, L.head.y + 34, `${text(10).toLowerCase()} · ready`, { align: 'right', font: 'mono', size: 17, alpha: sim, color: 'text' });
+        if (sim > 0) pill(ctx, L.head.x + L.head.w - 34, L.head.y + 34, '模拟 · 就绪', { align: 'right', font: 'mono', size: 17, alpha: sim, color: 'text' });
         ctx.camera();
         keyBand(ctx, t, 10, 925);
       },

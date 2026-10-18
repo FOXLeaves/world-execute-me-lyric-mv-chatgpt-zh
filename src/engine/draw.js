@@ -9,6 +9,7 @@
 // or simply by using a saturated colour: the bloom pass ignores cream and grey).
 import { mixPal, parseHex } from './palette.js';
 import { SAFE, VH, VW, split } from './layout.js';
+import { localizeUI, uiFont } from '../components/ui_zh.js';
 
 export { VW, VH };
 
@@ -157,6 +158,8 @@ export class Ctx {
   cw(size) { return size * 0.6; }
   /** Rendered width of a string. */
   measure(str, { size = 24, weight = 400, font = 'sans', spacing = 0, italic = false } = {}) {
+    str = localizeUI(String(str));
+    font = uiFont(str, font);
     if (font === 'mono') return str.length * (size * 0.6 + spacing);
     const key = `${font}|${weight}|${italic ? 1 : 0}|${str}`;
     let w100 = measured.get(key);
@@ -180,19 +183,24 @@ export class Ctx {
   /** Greedy word wrap. Returns the lines for `str` at the given style and width. */
   wrap(str, maxW, opts = {}) {
     const out = [];
-    for (const para of String(str).split('\n')) {
+    for (const para of localizeUI(String(str)).split('\n')) {
       let line = '';
-      for (const word of para.split(' ')) {
-        const next = line ? `${line} ${word}` : word;
-        if (line && this.measure(next, opts) > maxW) { out.push(line); line = word; } else line = next;
+      // CJK body copy can break between ideographs rather than only at spaces.
+      const chinese = uiFont(para) === 'scSans' || uiFont(para) === 'tcSans';
+      for (const word of chinese ? [...para] : para.split(' ')) {
+        const next = chinese ? line + word : line ? `${line} ${word}` : word;
+        if (line && this.measure(next, opts) > maxW) { out.push(line.trimEnd()); line = word.trimStart(); }
+        else line = next;
       }
       out.push(line);
     }
     return out;
   }
 
-  text(str, x, y, { size = 24, weight = 400, color = 'text', alpha = 1, align = 'left', spacing = 0, font = 'sans', stroke = 0, italic = false } = {}) {
+  text(str, x, y, { size = 24, weight = 400, color = 'text', alpha = 1, align = 'left', spacing = 0, font = 'sans', stroke = 0, italic = false, literal = false } = {}) {
     if (!(alpha > 0.003) || !str) return;
+    str = literal ? String(str) : localizeUI(String(str));
+    font = uiFont(str, font);
     // The bundled Latin faces only contain Latin-1 and a handful of punctuation marks and signs (LATIN above); a CJK
     // role has only the slices for its own configured string preloaded. Anything else would silently fall back to a
     // system font (different on every machine) or pop in a few frames late, so it is reported instead.

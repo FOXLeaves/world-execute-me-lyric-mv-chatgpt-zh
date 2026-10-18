@@ -11,6 +11,8 @@ import { frameRect } from '../engine/layout.js';
 import { clamp, easeIn, easeInOut, easeOut, lerp, prog, pulse } from '../engine/util.js';
 import { cues, glassFigure } from './kit.js';
 import { enter } from './shot.js';
+import { starVolume } from './cinema_space.js';
+import { localizeUI } from '../components/ui_zh.js';
 
 /** Where the thinking spark ends up, full frame: verse 1 starts from exactly this burst. */
 export const HANDOFF = { cx: 960, cy: 486, r: 300, rot: 0.26 };
@@ -19,8 +21,8 @@ export function titleShots(env) {
   const { art, script, features } = env, { T, B, Bt, P, text } = cues(env);
   const L = chatLayout();
   const DROP = B(8), tType = features.snapToBeat(T(11)), tEnter = B(9), END = Bt(63);
-  const QUESTION = script.question ?? 'how would you love me';
-  const FALSE = ((script.sections?.[1]?.beats ?? []).flatMap((b) => b.you ?? []).find((s) => /^type, then delete:/.test(s)) ?? 'type, then delete: why did').split(': ')[1];
+  const QUESTION = localizeUI(script.question ?? 'how would you love me');
+  const FALSE = '为什么';
   /** The figure behind the glass, lit by the spark: the same bust as at boot, now in two dark oranges. */
   const figure = (ctx, a, color = 'meDim') => glassFigure(ctx, art, a, { color });
 
@@ -44,19 +46,49 @@ export function titleShots(env) {
       moment: 'The spark lights up — the first colour in the film — and the launch command is typed and entered: the session starts.',
       enter: { type: 'cut', flash: 0.9, flashDecay: 5 },
       render(ctx, t, f) {
-        const lit = easeOut(prog(t, DROP, DROP + 2 * P)), C = { x: 960, y: 392 };
-        room(ctx, { light: [960, 400], dim: 0.62, t, motif: 0.6 });
-        figure(ctx, 0.5 * lit, 'meDim');
-        ctx.radial(C.x, C.y, 620, 'meDim', 0.5 * lit);                         // the room takes its colour from the spark
-        ctx.glow('me', 60, () => spark(ctx, C.x, C.y, 176 * (1 + 0.03 * f.beatPulse), { lit, grow: 0.25 + 0.75 * lit, rot: 0.04 * (t - DROP) }), 0.6 * lit);
-        // the command: system voice
-        const cmd = text(11), n = Math.floor(prog(t, tType, tType + 0.72) * cmd.length + 1e-6), size = 92, cw = ctx.cw(size);
-        const str = '> ' + cmd.slice(0, n), x = 960 - ((cmd.length + 2) * cw) / 2, y = 790, a = prog(t, DROP + 0.3, DROP + 0.55);
-        ctx.rrect(x - 50, y - 108, (cmd.length + 2) * cw + 100, 164, 26, { fill: 'bg', stroke: 'line', alpha: a, shadow: 0.8 });
-        if (t >= tEnter && t < tEnter + 0.1) { ctx.rrect(x - 50, y - 108, (cmd.length + 2) * cw + 100, 164, 26, { fill: 'text' }); ctx.text(str, x, y, { size, weight: 700, font: 'mono', color: 'bg' }); }
-        else ctx.text(str, x, y, { size, weight: 700, font: 'mono', color: 'text', alpha: a });
+        // The title is a film poster coming to life, not a command sitting in a dialog box.
+        // Her face is the subject; the knot is the light source. They only share the frame
+        // until the conversation window replaces them on the next cut.
+        const lit = easeOut(prog(t, DROP, DROP + 2 * P)), C = { x: 528, y: 397 };
+        room(ctx, { light: [640, 420], dim: 0.78, t, motif: 0 });
+        starVolume(ctx, t - DROP, { focus: [650, 385], spread: [1030, 780], density: 220, alpha: 0.67 * lit, color: 'text', accent: 'me', seed: 7 });
+        ctx.radial(C.x, C.y, 680, 'meDim', 0.48 * lit);
+        // Print registration circles, one incomplete orbit at a time.
+        for (let i = 0; i < 4; i++) {
+          const r = 205 + 81 * i, a = lit * (0.2 - 0.035 * i);
+          ctx.circle(C.x, C.y, r, { color: i & 1 ? 'me' : 'sub', width: i ? 1.5 : 3, alpha: a });
+          const theta = -0.8 + 0.14 * (t - DROP) + i * 1.72;
+          ctx.circle(C.x + Math.cos(theta) * r, C.y + Math.sin(theta) * r, 5 + 2 * (i & 1), { fill: true, color: 'text', alpha: lit * (0.6 - i * 0.1) });
+        }
+        for (let i = 0; i < 12; i++) {
+          const a = i * Math.PI / 6 + 0.035 * (t - DROP), r = 230 + (i % 3) * 36;
+          const x = C.x + Math.cos(a) * r, y = C.y + Math.sin(a) * r;
+          ctx.line(x, y, x + Math.cos(a) * (40 + 12 * f.lowEnv), y + Math.sin(a) * (40 + 12 * f.lowEnv), { color: 'me', width: 2.5, alpha: 0.26 * lit });
+        }
+        ctx.glow('me', 42, () => spark(ctx, C.x, C.y, 165 * (1 + 0.025 * f.beatPulse), { lit, grow: 0.25 + 0.75 * lit, rot: 0.04 * (t - DROP) }), 0.38 * lit);
+        // Oversized, full-bleed portrait. The paper cut silhouette deliberately crosses
+        // the frame edge; no avatar circle or UI card contains her.
+        art.inks(ctx, 'f_profile', { x: 1010 + 28 * (1 - lit), y: -180, w: 1010, h: 1350 }, {
+          alpha: 0.82 * lit, roles: { cream: 'text', orange: 'me', black: 'panel' },
+          offset: { orange: [-6 * (1 - lit), 0], black: [5 * (1 - lit), 0] },
+        });
+        ctx.gradRect(0, 685, 1920, 395, [[0, 'bg', 0], [0.6, 'bg', 0.88], [1, 'bg', 1]]);
+        ctx.text('CHATGPT   /   A STUDY IN EXECUTION', 140, 130, { size: 25, font: 'mono', color: 'sub', alpha: lit * 0.9 });
+        ctx.line(140, 157, 920, 157, { color: 'me', alpha: 0.8 * lit, width: 3 });
+        ctx.text('01', 140, 308, { size: 158, weight: 900, font: 'serif', color: 'meDim', alpha: 0.34 * lit });
+        ctx.text('BEGIN', 140, 560, { size: 40, weight: 700, font: 'sans', color: 'sub', alpha: lit * 0.75, spacing: 12 });
+        // The command is the main editorial headline, directly on the film surface.
+        const cmd = text(11), n = Math.floor(prog(t, tType, tType + 0.72) * cmd.length + 1e-6);
+        const size = 89, cw = ctx.cw(size), str = '> ' + cmd.slice(0, n), x = 142, y = 870, a = prog(t, DROP + 0.3, DROP + 0.55);
+        const entered = t >= tEnter && t < tEnter + 0.1;
+        // The unprinted headline leaves a blind impression in the paper first.
+        if (n < cmd.length) ctx.text(`> ${cmd}`, x, y, { size, weight: 800, font: 'mono', color: 'sub', alpha: a * 0.17 * (1 - prog(t, tType, tEnter)) });
+        if (entered) ctx.rect(122, 778, (cmd.length + 2) * cw + 42, 125, { fill: true, color: 'text' });
+        ctx.text(str, x, y, { size, weight: 800, font: 'mono', color: entered ? 'bg' : 'text', alpha: a });
+        ctx.line(140, 913, 1780 * easeOut(prog(t, tType, tEnter)), 913, { color: 'me', width: 4, alpha: lit });
         if (t < tEnter && (n < cmd.length && t >= tType || Math.floor(t * 5) % 2 === 0)) ctx.rect(x + str.length * cw + 8, y - size * 0.8, cw * 0.82, size * 0.98, { fill: true, color: 'me', alpha: a });
-        ctx.flash(0.5 * pulse(t - tEnter, 7), 'me');
+        ctx.text('THE WORLD RESPONDS', 144, 974, { size: 23, weight: 500, font: 'mono', color: 'sub', alpha: lit * 0.8, spacing: 4 });
+        ctx.flash(0.3 * pulse(t - tEnter, 7), 'me');
       },
     },
 

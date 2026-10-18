@@ -25,11 +25,12 @@ const boot = (() => {
     step(label) {
       n++;
       $('loadFill').style.width = `${(100 * n / total).toFixed(1)}%`;
-      $('loadText').textContent = `${String(n).padStart(2, ' ')} / ${total}   ${label}`;
+      const zh = String(label).replace(/^font\s+/, '字体 ').replace(/^silhouette\s+/, '人物剪影 ').replace(/^scenes$/, '镜头资源').replace(/^audio features$/, '音频特征').replace(/^lyric lines$/, '歌词数据').replace(/ italic$/, ' 斜体');
+      $('loadText').textContent = `${String(n).padStart(2, ' ')} / ${total}   ${zh}`;
       if (document.visibilityState !== 'visible') return undefined;         // nobody is looking: nothing to wait for
       return new Promise((res) => { const id = setTimeout(res, 80); requestAnimationFrame(() => { clearTimeout(id); res(); }); });
     },
-    fail(e) { $('loading').classList.add('failed'); $('loadText').textContent = `could not start: ${e.message}`; },
+    fail(e) { $('loading').classList.add('failed'); $('loadText').textContent = `启动失败：${e.message}`; },
     done() { $('loading').hidden = true; },
   };
 })();
@@ -37,16 +38,17 @@ const boot = (() => {
 let cfg, engine, width, height;
 try {
   cfg = await getJson('config.json');
-  boot.expect(2 + loadSteps(cfg));
+  boot.expect(3 + loadSteps(cfg));
   boot.step('config.json');
-  const [featuresData, lyricsData] = await Promise.all([
+  const [featuresData, lyricsData, lyricsZhData] = await Promise.all([
     getJson(cfg.paths.features).then((d) => (boot.step('audio features'), d)),
     getJson(cfg.paths.lyrics).then((d) => (boot.step('lyric lines'), d)),
+    getJson(cfg.paths.lyricsZh).then((d) => (boot.step('中文字幕'), d)),
   ]);
   width = +qs.get('w') || cfg.video.previewWidth;
   height = +qs.get('h') || cfg.video.previewHeight;
   // ?lab=<set> renders the check cards of src/scenes/lab.js instead of the film (node export/export.mjs --lab <set> --sheet ...)
-  engine = await createEngine({ canvas: $('view'), width, height, cfg, featuresData, lyricsData, flipY: isExport, lab: qs.get('lab'), onStep: isExport ? null : boot.step });
+  engine = await createEngine({ canvas: $('view'), width, height, cfg, featuresData, lyricsData, lyricsZhData, flipY: isExport, lab: qs.get('lab'), onStep: isExport ? null : boot.step });
 } catch (e) { boot.fail(e); throw e; }
 
 if (isExport) setupExport(); else setupPreview();
@@ -67,6 +69,8 @@ function setupExport() {
     ready: true,
     duration: engine.duration,
     renderer: engine.rendererInfo(),
+    /** Deterministic frame without readback: optional diagnostics / localisation QA. */
+    renderOnly(t) { engine.renderFrame(t); },
     /** Render stills at arbitrary times (QA contact sheets). */
     async exportTimes(times) {
       await opened;
@@ -113,14 +117,14 @@ function setupPreview() {
 
   const playing = () => wall !== null || (!audio.paused && !audio.ended);
   const now = () => (wall ? Math.min(mute ? D : 0, wall.t0 + (performance.now() - wall.at) / 1000) : !audio.paused && !audio.ended ? audio.currentTime : t);
-  const label = () => { playBtn.textContent = playing() ? 'pause' : 'play'; };
+  const label = () => { playBtn.textContent = playing() ? '暂停' : '播放'; };
   /** Start the sound at t (>= 0). If it will not start, the picture goes on without it rather than stand still. */
   const start = () => {
     heard = { t: -1, at: performance.now() };
     if (Math.abs(audio.currentTime - t) > 0.02) audio.currentTime = t;      // (the wall clock has run on without it)
     audio.play().catch((e) => {
       if (e.name === 'AbortError' || !audio.paused) return;                 // overtaken by a pause or a seek of ours
-      mute = { why: e.name === 'NotAllowedError' ? 'the browser did not let the sound start: press pause, then play' : `no sound (${e.name})`, retry: true };
+      mute = { why: e.name === 'NotAllowedError' ? '浏览器阻止音频播放：请先暂停，再点击播放' : `音频不可用（${e.name}）`, retry: true };
       wall = { t0: t, at: performance.now() }; label();
     });
   };
@@ -147,7 +151,7 @@ function setupPreview() {
   audio.onerror = () => {                                 // no file, or one the browser cannot play: the picture alone
     const was = playing();
     pause();
-    mute = { why: `no sound: "${cfg.paths.audio}" is missing or cannot be played here`, retry: false };
+    mute = { why: `音频不可用：找不到“${cfg.paths.audio}”，或浏览器无法播放`, retry: false };
     if (was) play();
   };
   seek.oninput = () => setT(+seek.value);
@@ -161,9 +165,9 @@ function setupPreview() {
   });
 
   const sound = () => (mute ? mute.why
-    : audio.readyState < 2 ? 'loading…'
-    : !audio.paused && !audio.ended && audio.readyState < 3 ? 'buffering…'
-    : `${wall ? 'starts when the page before the song is over' : !audio.paused && !audio.ended ? 'playing' : 'ready'}   ${timecode(audio.duration)}`);
+    : audio.readyState < 2 ? '正在加载…'
+    : !audio.paused && !audio.ended && audio.readyState < 3 ? '正在缓冲…'
+    : `${wall ? '片头结束后自动播放' : !audio.paused && !audio.ended ? '正在播放' : '就绪'}   ${timecode(audio.duration)}`);
 
   function draw(now) {
     const t0 = performance.now();
@@ -172,13 +176,15 @@ function setupPreview() {
     const f = engine.features.sample(now - cfg.timing.offset), ly = engine.lyrics.state(now - cfg.timing.offset);
     if (document.activeElement !== seek) seek.value = now;
     $('clock').textContent = `${timecode(now)} / ${timecode(D)}`;
-    $('iT').textContent = `${now.toFixed(3)} / ${Math.round(now * 60)}   (film ${timecode(now + PRE)})`;
-    $('iLine').textContent = ly.index < 0 ? '-' : `${ly.index + 1} / ${engine.lyrics.lines.length}${ly.active ? '' : ' (ended)'}  "${ly.line.text}"`;
-    $('iBeat').textContent = now < 0 ? 'before the song' : `beat ${f.beat} (${f.beatInBar + 1}/4)   bar ${f.bar}   ${engine.features.bpm} BPM`;
+    $('iT').textContent = `${now.toFixed(3)} 秒 / 第 ${Math.round(now * 60)} 帧   （影片 ${timecode(now + PRE)}）`;
+    $('iLine').textContent = ly.index < 0 ? '-' : `${ly.index + 1} / ${engine.lyrics.lines.length}${ly.active ? '' : '（已结束）'}  “${ly.line.text}”`;
+    $('iBeat').textContent = now < 0 ? '歌曲开始前' : `第 ${f.beat} 拍（${f.beatInBar + 1}/4）  第 ${f.bar} 小节   ${engine.features.bpm} 拍／分钟`;
     const shot = engine.shotAt(now - cfg.timing.offset);
-    $('iScene').textContent = shot ? `${engine.activeScenes(now - cfg.timing.offset).join(' → ')}   [${shot.state}]` : '-';
-    $('iMoment').textContent = shot?.moment || '-';
-    $('iPerf').textContent = `${perf.toFixed(1)} ms/frame @ ${width}x${height}   GPU: ${engine.rendererInfo()}`;
+    const palette = { on: '在线', warm: '暖色', off: '离线', paper: '纸面', error: '故障', err: '故障', black: '深色' };
+    const shotIndex = shot ? engine.scenes.indexOf(shot) + 1 : 0;
+    $('iScene').textContent = shot ? `第 ${shotIndex} 镜 · ${palette[shot.state] || '过渡'}` : '-';
+    $('iMoment').textContent = shot ? `歌词第 ${(shot.lines?.[0] ?? 0) + 1}–${(shot.lines?.[1] ?? 0) + 1} 行 · ${shot.start.toFixed(2)}–${shot.end.toFixed(2)} 秒` : '片头提示';
+    $('iPerf').textContent = `${perf.toFixed(1)} 毫秒／帧 · ${width}×${height}   图形设备：${engine.rendererInfo()}`;
   }
 
   // requestAnimationFrame is only a repaint trigger; the frame content depends on t alone.
@@ -194,7 +200,7 @@ function setupPreview() {
       if (c !== heard.t) heard = { t: c, at: w };
       else if (w - heard.at > (waiting ? 4000 : 2500)) {  // it stands still: go on without it rather than freeze
         t = c; audio.pause();
-        mute = { why: `the sound ${waiting ? 'does not load' : 'does not advance (no output device?)'}: playing without it; pause, then play, tries again`, retry: true };
+        mute = { why: `音频${waiting ? '加载失败' : '没有播放进度（请检查输出设备）'}：当前改为静音播放；暂停后再播放可重试`, retry: true };
         wall = { t0: t, at: w }; label();
       }
     }

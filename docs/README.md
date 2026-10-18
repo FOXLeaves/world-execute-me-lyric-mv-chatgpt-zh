@@ -5,8 +5,6 @@
 > **提示詞 · The prompts:** [v4/PROMPT_v4.md](v4/PROMPT_v4.md) · [v4/PROMPT_v4_fix.md](v4/PROMPT_v4_fix.md)
 >
 > 兩份都是簡體中文。 · Both are written in Simplified Chinese.
->
-> 用它們做了影片?請照 [README 的格式](../README.md#用本項目發布影片)註明出處。 · Made a video with them? Please credit it as described in the [README](../README.md#publishing-a-video-made-with-this-project).
 
 ---
 

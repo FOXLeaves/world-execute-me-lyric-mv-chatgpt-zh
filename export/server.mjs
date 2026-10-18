@@ -1,5 +1,5 @@
 // Tiny static file server (no dependencies) used by both preview and export.
-//   node export/server.mjs --open        -> preview at http://localhost:5173/
+//   node export/server.mjs --open        -> preview at port 5173 or an automatically selected free port
 // Supports HTTP Range (audio seeking) and a WebSocket upgrade hook the exporter uses to receive frames.
 import http from 'node:http';
 import fs from 'node:fs';
@@ -42,18 +42,32 @@ function serveFile(req, res) {
   });
 }
 
-/** Start the server. `onUpgrade(req, socket)` handles the exporter's frame WebSocket. Tries following ports if busy. */
+/** Start the server. `onUpgrade(req, socket)` handles the exporter's frame WebSocket.
+ * Busy ports try the next one; Windows-reserved/denied ports fall back to an OS-selected free port.
+ */
 export function startServer({ port = 5173, onUpgrade = null } = {}) {
   return new Promise((resolve, reject) => {
     const server = http.createServer(serveFile);
     server.on('upgrade', (req, socket) => (onUpgrade ? onUpgrade(req, socket) : socket.destroy()));
-    let tries = 0;
+    const HOST = '127.0.0.1';
+    let busyTries = 0, ephemeral = false;
     server.on('error', (e) => {
-      if (e.code === 'EADDRINUSE' && tries++ < 20) server.listen(++port, '127.0.0.1');
-      else reject(e);
+      if (!ephemeral && e.code === 'EADDRINUSE' && busyTries++ < 20) {
+        server.listen(++port, HOST);
+      } else if (!ephemeral && (e.code === 'EACCES' || e.code === 'EADDRINUSE')) {
+        // Port 0 asks the OS for a permitted free port; useful for Windows port exclusion ranges.
+        ephemeral = true;
+        server.listen(0, HOST);
+      } else {
+        reject(e);
+      }
     });
-    server.on('listening', () => resolve({ server, port, url: `http://localhost:${port}` }));
-    server.listen(port, '127.0.0.1');
+    server.on('listening', () => {
+      const actualPort = server.address().port;
+      if (actualPort !== port) console.log(`[server] Port ${port} unavailable; using ${actualPort} instead.`);
+      resolve({ server, port: actualPort, url: `http://127.0.0.1:${actualPort}` });
+    });
+    server.listen(port, HOST);
   });
 }
 

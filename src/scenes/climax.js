@@ -382,8 +382,8 @@ export function footOf(ctx, str, { maxW = 1800, maxSize = 440, base = 1050, pad 
   return { size, base, y: Math.round(base - capHeight(ctx) * size - pad) };
 }
 
-/** The three syllables of the stuck word as character ranges of its eight characters. */
-export const SYL3 = [[0, 3], [3, 5], [5, 8]];
+/** The three sung syllables of “爱—爱—爱”. */
+export const SYL3 = [[0, 1], [1, 3], [3, 5]];
 /**
  * THE STUCK WORD. It is printed in three passes, on the three syllables it is sung in (at = [t1, t2, t3]). A pass
  * changes two things only: one more chunk of letters slams in, and every chunk that was there already is pressed

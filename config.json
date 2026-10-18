@@ -4,6 +4,7 @@
     "lrc": "音頻&歌詞/Mili - world.execute (me) ;.lrc",
     "features": "data/audio_features.json",
     "lyrics": "data/lyrics.json",
+    "lyricsZh": "data/lyrics_zh.json",
     "art": "assets/character",
     "script": "docs/v4/chat_script.json",
     "errors": "docs/v4/errors.json"
@@ -31,15 +32,16 @@
   "seed": 20161011,
 
   "palettes": {
-    "_doc": "Colour is STATE, not decoration (docs/v4/PLAN.md §2). off = AI not started / user gone (greyscale). on = conversation live. warm = same hue, hotter. error = a UI error has happened. ash = errors dismissed, a little orange left. dead = powered down. errRed / errCream are full-field variants of `error` for single shots; errWarm (v4) is the state of the plates from 162.81 to 192.34 s: the dark ground of `error` with the orange and the cream of `warm` (no hue of its own; red only as thin edges). Roles: bg page, panel darker surface, raised cards/bubbles/inputs, line hairlines, text = cream = YOU and primary UI text, sub / mute secondary and disabled text, me = orange = the AI, meHot / meDim brighter / darker orange, err / errDim red. glow = bloom multiplier, sat = how much colour the character art keeps (0 = greyscale).",
+    "_doc": "Colour is narrative state: off = greyscale, on = live ChatGPT session, warm = brighter ChatGPT green, error = red UI failure, errWarm = red background with the AI's green, ash = desaturated afterglow, dead = shutdown. Internal ink key 'orange' is retained for compatibility with the existing plate choreography, but it is now ChatGPT green in every final frame. Cream = the user, green = ChatGPT, red = error.",
     "off":      { "bg": "#222220", "panel": "#161615", "raised": "#302f2c", "line": "#4b4a45", "text": "#e4e2da", "sub": "#aaa89f", "mute": "#6f6e67", "me": "#a09e95", "meHot": "#d2d0c8", "meDim": "#5e5d57", "err": "#a09e95", "errDim": "#55544f", "bloom": "#d0cec6", "glow": 0.45, "sat": 0.0 },
-    "on":       { "bg": "#262624", "panel": "#1f1e1d", "raised": "#30302e", "line": "#4a4844", "text": "#faf9f5", "sub": "#c2c0b6", "mute": "#7d7b73", "me": "#d97757", "meHot": "#ee8f66", "meDim": "#8a4b36", "err": "#f5506f", "errDim": "#86243c", "bloom": "#ffb08a", "glow": 1.0, "sat": 1.0 },
-    "warm":     { "bg": "#2c2520", "panel": "#241d19", "raised": "#3b312a", "line": "#5e4b3f", "text": "#fffaf1", "sub": "#dccbb9", "mute": "#917d6d", "me": "#ee8552", "meHot": "#ffa066", "meDim": "#a05636", "err": "#f5506f", "errDim": "#86243c", "bloom": "#ffba90", "glow": 1.25, "sat": 1.0 },
-    "error":    { "bg": "#1d1413", "panel": "#160e0d", "raised": "#2d1c1a", "line": "#553331", "text": "#faf9f5", "sub": "#cbb5af", "mute": "#80625d", "me": "#d97757", "meHot": "#ee8f66", "meDim": "#8a4b36", "err": "#f5506f", "errDim": "#8a2440", "bloom": "#ffa8a0", "glow": 1.1, "sat": 0.85 },
-    "errRed":   { "bg": "#a31b33", "panel": "#88162a", "raised": "#b92740", "line": "#d9506a", "text": "#faf9f5", "sub": "#f7dedb", "mute": "#dba0a6", "me": "#ffd9c6", "meHot": "#fff0e6", "meDim": "#e09a80", "err": "#1d1413", "errDim": "#57121f", "bloom": "#ffb0b0", "glow": 0.35, "sat": 0.85 },
-    "errWarm":  { "bg": "#1d1413", "panel": "#160e0d", "raised": "#2d1c1a", "line": "#553331", "text": "#fffaf1", "sub": "#dccbb9", "mute": "#80625d", "me": "#ee8552", "meHot": "#ffa066", "meDim": "#a05636", "err": "#f5506f", "errDim": "#8a2440", "bloom": "#ffba90", "glow": 1.1, "sat": 1.0 },
-    "errCream": { "bg": "#efece3", "panel": "#e2ded3", "raised": "#faf9f5", "line": "#bdb8aa", "text": "#262624", "sub": "#5d5b55", "mute": "#99968c", "me": "#a95234", "meHot": "#8a3a20", "meDim": "#dfa58d", "err": "#b81f4a", "errDim": "#e9a3b0", "bloom": "#ffffff", "glow": 0.2, "sat": 0.85 },
-    "ash":      { "bg": "#1c1b1a", "panel": "#161514", "raised": "#282624", "line": "#3e3b37", "text": "#cfccc4", "sub": "#96938a", "mute": "#6a6862", "me": "#b5765d", "meHot": "#d38d6e", "meDim": "#61493f", "err": "#8c5561", "errDim": "#4a343a", "bloom": "#d9b9a9", "glow": 0.6, "sat": 0.3 },
+    "on":       { "bg": "#202925", "panel": "#19211e", "raised": "#303b35", "line": "#45594f", "text": "#f7f7f2", "sub": "#bfd3c8", "mute": "#819a8d", "me": "#10a37f", "meHot": "#48d8ad", "meDim": "#11634f", "err": "#f5506f", "errDim": "#86243c", "bloom": "#86f7d0", "glow": 1.0, "sat": 1.0 },
+    "paper":    { "bg": "#edece4", "panel": "#e0e6dc", "raised": "#f7f5ed", "line": "#b5c7b9", "text": "#1b3027", "sub": "#527364", "mute": "#83988a", "me": "#087b5b", "meHot": "#0a9a72", "meDim": "#c5ddd0", "err": "#b52e50", "errDim": "#e1a4ae", "bloom": "#adffdc", "glow": 0.4, "sat": 0.82 },
+    "warm":     { "bg": "#20302a", "panel": "#182720", "raised": "#31433a", "line": "#517261", "text": "#fffaf1", "sub": "#d7e8dc", "mute": "#95aa9c", "me": "#25be96", "meHot": "#67e2bf", "meDim": "#177e63", "err": "#f5506f", "errDim": "#86243c", "bloom": "#abffe2", "glow": 1.25, "sat": 1.0 },
+    "error":    { "bg": "#1d1418", "panel": "#160e12", "raised": "#2d1c20", "line": "#55333e", "text": "#faf9f5", "sub": "#cbb5bc", "mute": "#80626b", "me": "#10a37f", "meHot": "#48d8ad", "meDim": "#11634f", "err": "#f5506f", "errDim": "#8a2440", "bloom": "#ffa8a0", "glow": 1.1, "sat": 0.85 },
+    "errRed":   { "bg": "#a31b33", "panel": "#88162a", "raised": "#b92740", "line": "#d9506a", "text": "#faf9f5", "sub": "#f7dedb", "mute": "#dba0a6", "me": "#c9f7e6", "meHot": "#effff8", "meDim": "#76b69f", "err": "#1d1413", "errDim": "#57121f", "bloom": "#bdffe7", "glow": 0.35, "sat": 0.85 },
+    "errWarm":  { "bg": "#1d1418", "panel": "#160e12", "raised": "#2d1c20", "line": "#55333e", "text": "#fffaf1", "sub": "#d7e8dc", "mute": "#80626b", "me": "#25be96", "meHot": "#67e2bf", "meDim": "#177e63", "err": "#f5506f", "errDim": "#8a2440", "bloom": "#abffe2", "glow": 1.1, "sat": 1.0 },
+    "errCream": { "bg": "#efece3", "panel": "#e2ded3", "raised": "#faf9f5", "line": "#bdb8aa", "text": "#262624", "sub": "#5d5b55", "mute": "#99968c", "me": "#087558", "meHot": "#064c3b", "meDim": "#68bda0", "err": "#b81f4a", "errDim": "#e9a3b0", "bloom": "#ffffff", "glow": 0.2, "sat": 0.85 },
+    "ash":      { "bg": "#1b211e", "panel": "#141916", "raised": "#272e29", "line": "#3b4941", "text": "#cfdbd1", "sub": "#90a399", "mute": "#667a70", "me": "#6a9684", "meHot": "#8eb8a7", "meDim": "#415b51", "err": "#8c5561", "errDim": "#4a343a", "bloom": "#b5d6c7", "glow": 0.6, "sat": 0.3 },
     "dead":     { "bg": "#050505", "panel": "#050505", "raised": "#0c0c0c", "line": "#161616", "text": "#8a8880", "sub": "#55544f", "mute": "#2c2c2a", "me": "#4a4844", "meHot": "#6a6862", "meDim": "#262624", "err": "#4a4844", "errDim": "#262624", "bloom": "#8a8880", "glow": 0.3, "sat": 0.0 }
   },
 
@@ -59,6 +61,7 @@
       { "role": "krSans",  "family": "Noto Sans KR",  "pkg": "noto-sans-kr",  "weight": 500, "text": "한국어" },
       { "role": "tcSerif", "family": "Noto Serif TC", "pkg": "noto-serif-tc", "weight": 700, "text": "六" },
       { "role": "tcSans",  "family": "Noto Sans TC",  "pkg": "noto-sans-tc",  "weight": 500, "text": "中文本片含有閃爍畫面與強光，光敏感者請留意" },
+      { "role": "scSans",  "family": "Noto Sans SC",  "pkg": "noto-sans-sc",  "weight": 500, "text": "中文界面模型设置输入文字" },
       { "role": "memeSans", "family": "Noto Sans TC", "pkg": "noto-sans-tc",  "weight": 900, "text": "不要嘲笑我做的视频，这都是我用一点画出来的。" }
     ]
   },
@@ -92,11 +95,11 @@
   },
 
   "safety": {
-    "_doc": "Photosensitivity guard. maxFlash caps every full-screen flash. preroll = seconds of silent warning page BEFORE the song (v4): the film starts at song time -preroll; every time in the code is song time (audio start = 0), so no cue moves. flashRange = the stretch the warning names, in SONG seconds; whatever is shown to viewers (the warning page, README, storyboard) adds preroll to it. warningLine = the Chinese line of the warning page (its characters must also be in fonts.cjk -> tcSans -> text, or they are not loaded). The small warning toast is still shown until warningSeconds of song time. tools/check_flash.py measures an exported file (use a 60 fps export).",
+    "_doc": "Photosensitivity guard. maxFlash caps every full-screen flash. preroll = seconds of silent warning page BEFORE the song (v4): the film starts at song time -preroll; every time in the code is song time (audio start = 0), so no cue moves. flashRange = the stretch the warning names, in SONG seconds; whatever is shown to viewers (the warning page, README, storyboard) adds preroll to it. warningLine = the Chinese line of the warning page (glyphs are preloaded for scSans via UI_ZH_GLYPHS). The small warning toast is still shown until warningSeconds of song time. tools/check_flash.py measures an exported file (use a 60 fps export).",
     "maxFlash": 0.7,
     "preroll": 5.0,
     "flashRange": [148.04, 192.34],
-    "warningLine": "本片含有閃爍畫面與強光，光敏感者請留意",
+    "warningLine": "本片含有闪烁画面与强光，光敏感者请留意",
     "warningSeconds": 6.5
   },
 

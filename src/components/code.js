@@ -61,7 +61,7 @@ export function codeLine(ctx, str, x, y, { size = 34, alpha = 1, force = null, w
   const cw = ctx.cw(size);
   let col = 0;
   for (const tk of tokens(str)) {
-    if (tk.s.trim()) ctx.text(tk.s, x + col * cw, y, { size, font: 'mono', weight: weight ?? tk.weight, color: force ?? tk.role, alpha });
+    if (tk.s.trim()) ctx.text(tk.s, x + col * cw, y, { size, font: 'mono', weight: weight ?? tk.weight, color: force ?? tk.role, alpha, literal: true });
     col += tk.s.length;
   }
   return col * cw;

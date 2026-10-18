@@ -21,6 +21,8 @@ import { frameRect, lerpRect } from '../engine/layout.js';
 import { clamp, easeBack, easeIn, easeInOut, easeOut, lerp, prog, pulse } from '../engine/util.js';
 import { aiLine, cues } from './kit.js';
 import { enter, shake } from './shot.js';
+import { absenceNetwork, starVolume } from './cinema_space.js';
+import { localizeUI } from '../components/ui_zh.js';
 
 const TAU = Math.PI * 2;
 /** Length of the rail before each unanswered message (px at unit scale): the waits, on a rough log scale. */
@@ -35,7 +37,7 @@ export function chorus2Shots(env) {
   // the two cuts inside the repeats sit on the bar lines just BEFORE lines 72 and 74 (0.14 s / 0.12 s ahead), so each
   // new set-up is already there when its first message is sent
   const START = B(56), cDots = H(66), cBrb = B(58), cDone = H(69), cLeft = Bt(239.5), cAway = B(61), cOff = B(62), cIso = Bt(253.5), END = B(64);
-  const ANCHOR = script.left_anchor ?? {}, BRB = ANCHOR.you ?? 'one sec, brb', BRB_AT = ANCHOR.timestamp ?? '07 Nov 23:40';
+  const ANCHOR = script.left_anchor ?? {}, BRB = localizeUI(ANCHOR.you ?? 'one sec, brb'), BRB_AT = localizeUI(ANCHOR.timestamp ?? '07 Nov 23:40');
   const SEQ = script.left_sequence ?? [70, 71, 72, 73, 74, 75].map((line) => ({ line, timestamp: '', gap_label: '' }));
   const HOLD = script.composer_placeholder ?? '', TITLE = script.title ?? '', SIDE = [TITLE, ...(script.sidebar ?? [])];
   const TYPING = (script.sections ?? []).flatMap((s) => s.beats ?? []).find((b) => b.id === 'typing-felt')?.ui?.[0] ?? 'typing…';
@@ -424,6 +426,8 @@ export function chorus2Shots(env) {
       render(ctx, t, f) {
         const bare = easeInOut(prog(t, T(75) - 0.05, T(75) + 0.7));
         room(ctx, { art, name: 'rain', alpha: 0.22, light: [W7.x + W7.w / 2, 480], dim: 0.72, motif: 0.35, t });
+        starVolume(ctx, t, { focus: [1060, 460], spread: [900, 620], density: 135, alpha: 0.26 + 0.23 * bare, color: 'sub', accent: 'me', seed: 11 });
+        absenceNetwork(ctx, t, { center: [1080, 480], radius: 760, alpha: 0.14 + 0.12 * bare, color: 'mute', broken: true });
         her(ctx, 'f_profile', { ...BOWED, y: BOWED.y + 5 * Math.sin((t - cOff) * 1.3) }, 0.9 - 0.3 * bare);
         windowFrame(ctx, L7, { glass: 0.9, alpha: 1 - bare, shadow: 1 - bare });
         chip(ctx, W7.x + W7.w - 28, W7.y + 44, pres(4), { size: 22, since: t - cOff });
@@ -441,6 +445,8 @@ export function chorus2Shots(env) {
       render(ctx, t, f) {
         const s = 0.225, x = 960 - (924 * s) / 2, y = 116;
         room(ctx, { art, name: 'rain', alpha: 0.14, light: [960, 350], dim: 0.78, motif: 0.25, t });
+        starVolume(ctx, t, { focus: [960, 405], spread: [990, 830], density: 240, alpha: 0.68, color: 'sub', accent: 'me', seed: 12 });
+        absenceNetwork(ctx, t, { center: [960, 350], radius: 865, alpha: 0.35, color: 'mute', broken: true });
         ctx.radial(960, 350, 380, 'raised', 0.5);
         her(ctx, 'f_profile', { x: 1122, y: 268, w: 108, h: 144 }, lerp(0.6, 0.3, prog(t, cIso + 0.1, cIso + 0.9)));           // the same bust, a speck beside the speck: fainter, not gone
         speck(ctx, x, y, s, 1);

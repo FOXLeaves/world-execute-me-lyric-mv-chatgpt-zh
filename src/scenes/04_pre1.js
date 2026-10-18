@@ -14,6 +14,7 @@ import { lerpRect } from '../engine/layout.js';
 import { rand } from '../engine/prng.js';
 import { clamp, easeBack, easeIn, easeInOut, easeOut, lerp, prog, pulse, window01 } from '../engine/util.js';
 import { cue } from './cues.js';
+import { orbitInstrument, signalHelix } from './cinema_space.js';
 import { ERA_LINE, STOPS, strip } from './history.js';
 import { cues } from './kit.js';
 import { enter } from './shot.js';
@@ -356,6 +357,10 @@ export function pre1Shots(env) {
     const sx = PC.x - lerp(196, 56, j) * (1 - d), cx = PC.x + lerp(226, 88, j) * (1 - d);
     const cw = lerp(lerp(600, 384, jj), 2 * R + 44, d), ch = lerp(232, 2 * R + 44, d);
     ctx.radial(PC.x, PC.y, 250 + 90 * d, 'meDim', 0.45 * a * jj);
+    ctx.clip({ x: WELL.x, y: WELL.y, w: WELL.w, h: WELL.h }, () => {
+      orbitInstrument(ctx, t, { center: [PC.x, PC.y], radius: 278, alpha: 0.28 * a, color: 'me', faint: 'sub' });
+      signalHelix(ctx, t, { from: [sx, PC.y], to: [cx, PC.y], radius: 63, turns: 2.8, alpha: 0.31 * a * jj, color: 'me', bright: 'text' });
+    });
     const halo = easeOut(prog(t, tDone + 0.08, tDone + 0.5));                                   // the sheet is closed; what it keeps of it is the two of them, layer under layer
     for (let i = 0; i < 4 && halo > 0; i++) ctx.poly(sparkOutline(PC.x, PC.y, R * (1.5 + 0.8 * i) * (0.7 + 0.3 * halo), { rot: 0.12 * (t - tShare) + i * 0.13 }), { close: true, color: i ? 'meDim' : 'me', width: 1.5, alpha: a * halo * (0.55 - 0.1 * i) });
     ctx.rrect(PC.x - cw / 2, PC.y - ch / 2, cw, ch, ch / 2, { fill: null, stroke: 'me', strokeAlpha: 0.35 + 0.35 * jj, width: 2, alpha: a });     // one outline round the two of them

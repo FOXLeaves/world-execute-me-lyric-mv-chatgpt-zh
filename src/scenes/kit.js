@@ -56,14 +56,22 @@ const GLYPHS = 'ABCDEFGHIKLMNOPRSTUVXYZ0123456789#/<>[]';
 export function keywordSys(ctx, str, t, at, cx, cy, { maxW = 1200, maxSize = 96, color = 'text', dimColor = 'mute', alpha = 1, key = 0, weight = 800, underline = true } = {}) {
   const age = t - at;
   if (age < 0 || alpha <= 0.003) return;
-  const n = str.length, base = Math.min(maxSize, maxW / (n * 0.72)), size = base * (1 + 0.06 * pulse(age, 9));
-  const cw = ctx.cw(size), sp = size * 0.12, total = n * cw + (n - 1) * sp;
+  const chars = [...str], n = chars.length, hasHan = /[\u3400-\u9fff]/u.test(str);
+  // The old 0.6em monospace cell worked for ASCII, but a Chinese glyph occupies
+  // about a full em: advancing it by 0.72em made the glyphs collide. Fit and
+  // advance each translated glyph by its real measured width instead.
+  const measured = hasHan ? chars.map((ch) => ctx.measure(ch, { size: 100, weight, font: 'scSans' }) / 100) : null;
+  const advanceEm = hasHan ? measured.reduce((sum, width) => sum + width, 0) + Math.max(0, n - 1) * 0.12 : n * 0.72;
+  const base = Math.min(maxSize, maxW / Math.max(advanceEm, 0.001)), size = base * (1 + 0.06 * pulse(age, 9));
+  const cw = ctx.cw(size), sp = size * 0.12;
+  const widths = hasHan ? measured.map((w) => w * size) : chars.map(() => cw);
+  const total = widths.reduce((sum, w) => sum + w, 0) + Math.max(0, n - 1) * sp;
   let x = cx - total / 2;
-  for (let i = 0; i < n; i++, x += cw + sp) {
+  for (let i = 0; i < n; i++, x += widths[i] + sp) {
     const appear = i * 0.018, settle = appear + 0.11;
-    if (age < appear || str[i] === ' ') continue;
-    const ch = age < settle ? GLYPHS[Math.floor(rand(11, key, i, Math.floor(t * 40)) * GLYPHS.length)] : str[i];
-    ctx.text(ch, x, cy, { size, weight, font: 'mono', color: age < settle ? dimColor : color, alpha });
+    if (age < appear || chars[i] === ' ') continue;
+    const ch = age < settle ? GLYPHS[Math.floor(rand(11, key, i, Math.floor(t * 40)) * GLYPHS.length)] : chars[i];
+    ctx.text(ch, hasHan ? x + widths[i] / 2 : x, cy, { size, weight, font: hasHan ? 'scSans' : 'mono', align: hasHan ? 'center' : 'left', color: age < settle ? dimColor : color, alpha });
   }
   if (underline) { const w = total * easeOut(prog(age, 0, 0.3)) * 0.5; ctx.line(cx - w, cy + size * 0.3, cx + w, cy + size * 0.3, { color: dimColor, alpha: alpha * 0.9, width: 2 }); }
 }

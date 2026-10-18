@@ -1,5 +1,9 @@
 # CREDITS
 
+> **ChatGPT Edition · 改編補充**：本衍生版本將實際畫面中的 AI 擬人角色和品牌資訊改為 ChatGPT。現行 `assets/character/*.png` 八張人物版畫由 AI 圖像生成功能依使用者提供的白髮龍角少女參考及原版構圖重新製作。綠色是 ChatGPT 的專屬畫面色，圖形母題改為六瓣互扣結。以下 Claude／Anthropic 的敘述是**原版製作來源的歷史署名**，不代表新版本的畫面仍顯示此品牌。原版角色圖的相關授權與署名仍需保留。
+>
+> **Adaptation note:** The current on-screen branding is ChatGPT/OpenAI. All eight character assets were AI-generated anew from a user-provided character reference and the source project's layouts. Claude/Anthropic mentions below document the upstream work and its provenance, not branding displayed in the adapted film. This derivative remains unofficial and unaffiliated with either provider or Mili.
+
 **中文**(以下)| **[English summary](#english-summary)**(本頁末尾 · at the end of this page)
 
 本項目是**非官方同人作品**。
@@ -14,7 +18,7 @@
 | 內容 | 授權 |
 | --- | --- |
 | 程式碼(`src/`、`export/`、`tools/`、`index.html`、`config.json`),以及本項目自己撰寫的文件、聊天文案與錯誤文案(`docs/`) | MIT,見 [LICENSE](LICENSE) |
-| 角色剪影(`assets/character/*.png`)與含有它們的畫面(例如 `docs/images/cover.jpg`) | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hant):署名、非商業、以相同方式分享。署名:Nyankomint |
+| 角色剪影(`assets/character/*.png`)與含有它們的畫面(例如 `docs/images/cover.jpg`) | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hant):署名、非商業、以相同方式分享 |
 | 歌曲的錄音、音樂與歌詞 | **不在本倉庫內**。權利屬於 Mili 及相關權利人,上面兩種授權都不涵蓋它們 |
 | 字體 | 不在本倉庫內,安裝時由 npm 取得;各為 SIL OFL 1.1(見下方「字體」) |
 | Claude 的名稱與標誌 | Anthropic 的商標;上面兩種授權都不涉及任何商標權利 |
@@ -81,6 +85,7 @@
 | JetBrains Mono (300/400/700/800) | 等寬體 = 系統與程式碼 | JetBrains · github.com/JetBrains/JetBrainsMono | npm `@fontsource/jetbrains-mono` |
 | Noto Serif KR (700) / Noto Sans KR (500) | 數數卡的韓文(數詞 / 語言名) | Google · Adobe(Noto CJK) | npm `@fontsource/noto-serif-kr`、`@fontsource/noto-sans-kr` |
 | Noto Serif TC (700) / Noto Sans TC (500) | 數數卡的中文(數詞 / 語言名);Noto Sans TC 另用於片頭警告頁的中文一行 | Google · Adobe(Noto CJK) | npm `@fontsource/noto-serif-tc`、`@fontsource/noto-sans-tc` |
+| Noto Sans SC (500) | V8–V10 的简体中文界面与 V10 全片歌词、动态关键词大字 | Google · Adobe (Noto CJK) | npm `@fontsource/noto-sans-sc` |
 
 第二版使用的 Anton 已移除。
 
@@ -117,7 +122,7 @@ This project is an **unofficial fan work**.
 | Content | Licence |
 | --- | --- |
 | The code (`src/`, `export/`, `tools/`, `index.html`, `config.json`) and the documents, chat text and error text written for this project (`docs/`) | MIT, see [LICENSE](LICENSE) |
-| The character silhouettes (`assets/character/*.png`) and pictures that contain them (for example `docs/images/cover.jpg`) | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): attribution, non-commercial, share alike. Credit: Nyankomint |
+| The character silhouettes (`assets/character/*.png`) and pictures that contain them (for example `docs/images/cover.jpg`) | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): attribution, non-commercial, share alike |
 | The recording, the music and the lyrics of the song | **Not in this repository.** They belong to Mili and the respective rights holders; neither licence above covers them |
 | The fonts | Not in this repository; fetched by npm at install time; each under SIL OFL 1.1 |
 | The name and marks of Claude | Trademarks of Anthropic; neither licence above grants any trademark right |
@@ -181,6 +186,7 @@ share it only as those guidelines allow.
 | Inter | Sans = the interface and the user | Rasmus Andersson · github.com/rsms/inter |
 | JetBrains Mono | Mono = the system and code | JetBrains · github.com/JetBrains/JetBrainsMono |
 | Noto Serif KR / Noto Sans KR, Noto Serif TC / Noto Sans TC | Korean and Chinese on the counting cards; the Chinese line of the warning page | Google · Adobe (Noto CJK) |
+| Noto Sans SC | Simplified-Chinese UI (V8–V9) and timed on-screen Chinese lyrics and keyword animation (V10) | Google · Adobe (Noto CJK) |
 
 ### Third-party software
 

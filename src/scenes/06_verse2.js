@@ -26,6 +26,7 @@ import { meBubble, meIn, youBubble } from './bubbles.js';
 import { cue } from './cues.js';
 import { cues } from './kit.js';
 import { plateCat, plateFruit, plateProof } from './plates_verse2.js';
+import { localizeUI } from '../components/ui_zh.js';
 
 /** The four requests: [noun cue, its lines (two sung lines and the keyword), what precedes it in the thread (the keyword before)]. */
 const REQ = [['nounEggplant', 44, 43], ['nounTomato', 47, 46], ['nounTabby', 50, 49], [null, 53, 52]];
@@ -36,7 +37,7 @@ export const PRE2_POINTER = (() => { const L = chatLayout({ side: 0 }); return [
 export function verse2Shots(env) {
   const { art, script, lyrics, features } = env, { T, B, Bt, text } = cues(env);
   const CARDS = script.cards_section6 ?? [], BEATS = (script.sections ?? []).find((s) => s.n === 6)?.beats ?? [];
-  const req = (i) => CARDS[i]?.request ?? BEATS[i]?.you?.[0] ?? '';
+  const req = (i) => localizeUI(CARDS[i]?.request ?? BEATS[i]?.you?.[0] ?? '');
   // cuts: Send, noun, Send, noun, Send, noun, Send, lights down. All on the grid: a noun's time is snapped to the half-beat.
   const SEND = [B(40), Bt(167.5), Bt(175.5), Bt(183.5)], NOUN = [0, 1, 2].map((k) => features.snapHalf(cue(REQ[k][0]))), DARK = Bt(184.5), END = B(48);
 

@@ -35,7 +35,7 @@ const warned = new Set();
 const warnOnce = (key, msg) => { if (!warned.has(key)) { warned.add(key); console.warn(msg); } };
 
 /** The three inks as the files have them (set medians; refined per image at load). Print order: cream, orange, black. */
-const INK_RGB = [[244, 224, 198], [220, 114, 63], [36, 26, 21]];
+const INK_RGB = [[244, 224, 198], [16, 163, 127], [36, 26, 21]];
 const INK_KEY = { cream: 0, orange: 1, black: 2 };
 /**
  * Registration onto f_bust: p' = s * p + [tx, ty] in source px (measured, docs/v4/maps/map_assets.json):

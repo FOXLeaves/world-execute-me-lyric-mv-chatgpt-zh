@@ -21,6 +21,7 @@ import { burst, spark } from '../components/motif.js';
 import { dashedRing, ground, keyword } from '../components/plate.js';
 import { clamp, easeBack, easeInOut, easeOut, lerp, prog, pulse } from '../engine/util.js';
 import { LOOP, LOOP_ERRS } from './loop.js';
+import { absenceNetwork, orbitInstrument, perspectiveChamber, signalHelix, simulationSky } from './cinema_space.js';
 
 const TAU = Math.PI * 2;
 /** The pointer's outline (components/cursor.js), tip at the origin. */
@@ -62,6 +63,10 @@ export function plateStimulations(ctx, env, P) {
   const S = [400, 470], R = 240, a = flashIn(t, hit), age = t - hit;
   ctx.fx.glow = Math.min(ctx.fx.glow, 0.34);
   ground(ctx, { light: [760, 430, 640, 'raised', 1] });
+  simulationSky(ctx, t, { focus: [855, 360], strength: 0.95, stars: 280, seed: 4, broken: noCream });
+  // What looks like a single outgoing streak is a helical transmission in depth.
+  ctx.radial(870, 430, 750, 'meDim', 0.14);
+  signalHelix(ctx, t, { from: S, to: you, radius: 102, turns: 4.8, alpha: 0.66, color: 'me', bright: 'text', phase: 0.6 });
   title(ctx, P);
   if (a <= 0) return;
   const settle = 1 + 0.05 * pulse(age, 16), dx = you[0] - S[0], dy = you[1] - S[1], len = Math.hypot(dx, dy), ux = dx / len, uy = dy / len;
@@ -115,6 +120,8 @@ export function plateSatisfaction(ctx, env, P) {
   const C = [760, 432], R = 306, a = flashIn(t, at);
   ctx.fx.glow = Math.min(ctx.fx.glow, 0.3);
   ground(ctx, { light: [760, 430, 620, 'raised', 1] });
+  simulationSky(ctx, t, { focus: [770, 455], strength: 0.78, stars: 230, seed: 5, broken: noCream });
+  orbitInstrument(ctx, t, { center: C, radius: 405, alpha: noCream ? 0.28 : 0.62 });
   title(ctx, P);
   if (a <= 0) return;
   const last = press.filter((p) => t >= p).pop() ?? null, sp = last == null ? -1 : t - last, done = last != null && !noCream;
@@ -185,6 +192,8 @@ export function plateExecution(ctx, env, P) {
   const a = flashIn(t, hit), age = t - hit;
   ctx.fx.glow = Math.min(ctx.fx.glow, 0.34);
   ground(ctx, { light: [820, 420, 640, 'raised', 1] });
+  simulationSky(ctx, t, { focus: [990, 445], strength: 0.73, stars: 230, seed: 6, broken: noCream });
+  perspectiveChamber(ctx, t, { center: [1050, 470], aperture: [2100, 1160], alpha: noCream ? 0.34 : 0.24, color: noCream ? 'err' : 'me', speed: 0.35 });
   title(ctx, P, { maxSize: 226 });
   if (a <= 0) return;
   const g = ctx.g, a0 = g.globalAlpha, X = 300, Y = 190, SIZE = 48, LHK = 1.6, LH = SIZE * LHK, cw = ctx.cw(SIZE);
@@ -315,6 +324,11 @@ export function plateSimulation(ctx, env, P) {
   const a = flashIn(t, at), back = t >= pull ? 1 : 0, drift = 0;
   ctx.fx.glow = Math.min(ctx.fx.glow, 0.3);
   ground(ctx, { light: back > 0 ? null : [960, 400, 620, 'raised', 1], marks: back < 0.5 });
+  simulationSky(ctx, t, { focus: [960, 390], strength: back > 0 ? 0.94 : 0.66, stars: 295, seed: 8, broken: noCream });
+  if (back > 0) {
+    perspectiveChamber(ctx, t, { center: [960, 405], aperture: [1950, 1170], alpha: 0.48, color: noCream ? 'err' : 'me', speed: 0.12, seed: 3 });
+    absenceNetwork(ctx, t, { center: [960, 420], radius: 870, alpha: 0.27, color: 'sub', broken: noCream });
+  }
   if (a > 0) {
     const s = lerp(1, 0.4, back) * (1 - 0.04 * drift) * (1 + 0.03 * pulse(t - at, 16) * (1 - back)), g = ctx.g, a0 = g.globalAlpha;
     g.globalAlpha = a0 * a;

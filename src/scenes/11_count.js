@@ -33,12 +33,12 @@ const COUNT_SHIFT = 0;
  * written in code). side: +1 = word left / name right. ws = word size, wb = baseline of its glyphs below the centre line, in em.
  */
 const LANGS = [
-  { code: 'de', word: 'eins', name: 'Deutsch', wf: 'serif', nf: 'sans', side: 1, ws: 176, wb: 0.3 },
-  { code: 'es', word: 'dos', name: 'Español', wf: 'serif', nf: 'sans', side: -1, ws: 176, wb: 0.3 },
-  { code: 'fr', word: 'trois', name: 'Français', wf: 'serif', nf: 'sans', side: 1, ws: 156, wb: 0.3 },
-  { code: 'ko', word: '넷', name: '한국어', wf: 'krSerif', nf: 'krSans', side: -1, ws: 216, wb: 0.36 },
-  { code: 'sv', word: 'fem', name: 'Svenska', wf: 'serif', nf: 'sans', side: 1, ws: 176, wb: 0.3 },
-  { code: 'zh', word: '六', name: '中文', wf: 'tcSerif', nf: 'tcSans', side: -1, ws: 216, wb: 0.36 },
+  { code: 'de', word: '一', name: 'Deutsch', wf: 'scSans', nf: 'sans', side: 1, ws: 216, wb: 0.36 },
+  { code: 'es', word: '二', name: 'Español', wf: 'scSans', nf: 'sans', side: -1, ws: 216, wb: 0.36 },
+  { code: 'fr', word: '三', name: 'Français', wf: 'scSans', nf: 'sans', side: 1, ws: 216, wb: 0.36 },
+  { code: 'ko', word: '四', name: '한국어', wf: 'scSans', nf: 'krSans', side: -1, ws: 216, wb: 0.36 },
+  { code: 'sv', word: '五', name: 'Svenska', wf: 'scSans', nf: 'sans', side: 1, ws: 216, wb: 0.36 },
+  { code: 'zh', word: '六', name: '中文', wf: 'scSans', nf: 'tcSans', side: -1, ws: 216, wb: 0.36 },
 ];
 
 export function countShots(env) {
@@ -109,15 +109,20 @@ export function countShots(env) {
   // ---- the last shout: the word as windows onto her
   const SYL = [0, 1, 2, 3].map((j) => HIT + (j * P) / 2);             // the four syllables: beats 350, 350.5, 351, 351.5
   function lastShout(ctx, t) {
-    const word = text(104), rows = [word.slice(0, CHUNKS[2][1]), word.slice(CHUNKS[2][1])], o = { font: 'serif', weight: 900 };
-    const size = rows.map((r) => ctx.fit(r, 1790, o));
+    const word = text(104), chinese = /[\u3400-\u9fff]/u.test(word);
+    // Four Chinese glyphs need a balanced 2×2 title, not the 5+4-letter English split.
+    // Each character still opens on its original sung beat and masks the same portrait.
+    const rows = chinese ? [word.slice(0, 2), word.slice(2)] : [word.slice(0, CHUNKS[2][1]), word.slice(CHUNKS[2][1])];
+    const o = { font: chinese ? 'scSans' : 'serif', weight: 900 };
+    const size = rows.map((r) => ctx.fit(r, chinese ? 1400 : 1790, { ...o, maxSize: chinese ? 460 : 2000 }));
     // cap height of the face, measured (the rows are set by their capitals)
-    ctx.font(100, 900, 'serif');
-    const cap = ctx.g.measureText('E').actualBoundingBoxAscent / 100;
+    ctx.font(100, 900, o.font);
+    const cap = ctx.g.measureText(chinese ? '执' : 'E').actualBoundingBoxAscent / 100;
     // the lower row is placed so that the stem of its second letter stands on her open eye; the upper row sits on it
     const w2 = ctx.measure(rows[1].slice(0, 2), { ...o, size: size[1] }), wI = ctx.measure(rows[1][1], { ...o, size: size[1] });
-    const xB = EYE.eye[0] - (w2 - wI / 2), yB = EYE.eye[1] + cap * size[1] * 0.5;
-    const yT = yB - cap * size[1] - 40, xT = CX - ctx.measure(rows[0], { ...o, size: size[0] }) / 2;
+    const xB = chinese ? CX - ctx.measure(rows[1], { ...o, size: size[1] }) / 2 : EYE.eye[0] - (w2 - wI / 2);
+    const yB = chinese ? 980 : EYE.eye[1] + cap * size[1] * 0.5;
+    const yT = chinese ? 480 : yB - cap * size[1] - 40, xT = CX - ctx.measure(rows[0], { ...o, size: size[0] }) / 2;
     const lit = (i) => { const g = CHUNKS.findIndex(([a, z]) => i >= a && i < z); return t >= SYL[g]; };
     /** Every letter of the two rows: fn(char, x of its left edge, baseline, size, index in the word). */
     const letters = (fn) => rows.forEach((r, k) => {

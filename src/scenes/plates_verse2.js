@@ -20,6 +20,7 @@ import { youBox } from './bubbles.js';
 import { MOL, drawMolecule, formula } from './molecules.js';
 import { dataText, eggplant, tomato } from './objects.js';
 import { arrow } from './plates_chorus.js';
+import { purrRoom, specimenFront, specimenStage } from './v7_atelier.js';
 
 const TAU = Math.PI * 2;
 /** Where the picture ends and the foot of the sheet begins. */
@@ -97,8 +98,10 @@ export function plateFruit(ctx, env, P) {
   const { t, at, kind, settle, open, hit } = P, a = flashIn(t, at), cut = t - open;
   sheet(ctx);
   const draw = kind === 'tomato' ? tomato : eggplant, at0 = kind === 'tomato' ? { cx: 930, cy: 478, s: 306 } : { cx: 950, cy: 452, s: 356, tilt: 0.8 };
+  specimenStage(ctx, t, { kind, center: [at0.cx, at0.cy], hit, intro: at });
   const k = 1 + 0.045 * pulse(t - at, 16);                              // it lands a touch large
   if (a > 0) ctx.at(at0.cx * (1 - k), at0.cy * (1 - k), () => draw(ctx, env, { ...at0, alpha: a, t, decode: prog(t, at, settle), open: prog(t, open, open + 0.2), give: t >= hit ? t - hit : -1, stream: false }), { scale: k });
+  specimenFront(ctx, t, { kind, center: [at0.cx, at0.cy], hit });
   gift(ctx, env, kind, t - hit);
   ctx.fx.shake = [6 * pulse(cut, 14) * Math.sin(cut * 90), 4 * pulse(cut, 14) * Math.cos(cut * 70)];        // the knife
   caption(ctx, env, t, P.lines);
@@ -169,6 +172,7 @@ function purr(ctx, P) {
 export function plateCat(ctx, env, P) {
   const { t, at, ears, develop, hit } = P, { art } = env, g = ctx.g, a = flashIn(t, at);
   sheet(ctx, [650, 520, 620, 'raised', 1]);
+  purrRoom(ctx, t);
   const text = dataText((env.script.cards_section6 ?? [])[2], 'purr:25-150Hz·', ''), kf = FIG.w / 1086;
   const flower = (name) => { const r = art.region(name, 'flower'); return r ? [r.x + r.w / 2, r.y + r.h / 2] : [760, 217]; };
   const fb = flower('f_bust'), fp = flower('cat_paws'), PAWS = { x: FIG.x + (fb[0] - fp[0]) * kf, y: FIG.y + (fb[1] - fp[1]) * kf, w: FIG.w, h: FIG.h };

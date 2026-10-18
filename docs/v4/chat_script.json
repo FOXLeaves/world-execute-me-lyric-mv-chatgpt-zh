@@ -708,7 +708,7 @@
         {
           "id": "credit-note",
           "lines": [],
-          "moment": "Three lines of credit on black (src/scenes/overlay.js): unofficial fan-made video, not affiliated with Anthropic or Mili; trademark and music; the silhouettes were supplied by the maker, the interface is drawn in code.",
+          "moment": "Three lines of credit on black (src/scenes/overlay.js): unofficial fan-made video, not affiliated with OpenAI or Mili; ChatGPT trademark and music; character assets adapted from a user-supplied reference using AI image generation.",
           "you": [],
           "ui": [],
           "system": [],
