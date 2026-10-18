@@ -1,6 +1,6 @@
 # world.execute(me); — ChatGPT Edition · 歌詞 MV / Lyric MV
 
-> **当前升级：ChatGPT Cinematic V11 · 中文字幕字距修正版 · ChatGPT 6.1 sol。** 在 V10 全片 **129 行简体中文歌词**基础上修复了片头大字（如“防护措施”“创造万物”“初始化”“模拟世界”）的汉字重叠：原排版使用英文字母 0.6em 的等宽步距，新版根据实际汉字字宽及字间距逐字居中排列。V10 的 87 个镜头、中文歌词与分拍动画、角色、音乐及全部时间点保持不变。原英文 LRC、`data/lyrics.json` 也未修改，画面仍从 `data/lyrics_zh.json` 读取中文字幕。左下角用户名为「寒境域雪」，模型为 `ChatGPT 6.1 sol`；代码表达式及错误码保留其编程语义。详见 [中文使用说明](CHATGPT_EDITION_使用说明.md)，Windows 一键导出仍使用 `export_1080p60.cmd`。
+> 详见 [中文使用说明](CHATGPT_EDITION_使用说明.md)，Windows 一键导出仍使用 `export_1080p60.cmd`。
 
 > **改编版 · Adapted edition.** 这个版本已将画面里的 AI 身份替换为 **ChatGPT**，并使用用户提供的白发龙角少女设定重制八张绿色 / 象牙白 / 深墨色人物版画。原版的镜头、节奏与剧情结构不变。`DESIGN.md` 是新版视觉规则；`docs/v3/`、`docs/v4/` 是原作者的历史制作记录。下方的原版 4K / 闪光测试结果**尚未在改编版上重新认证**。
 >
