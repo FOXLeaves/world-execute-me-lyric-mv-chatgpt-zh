@@ -11,12 +11,13 @@
 >
 > 製作者給 AI 的要求全部公開在 [`docs/`](docs/README.md):[第四版的完整提示詞](docs/v4/PROMPT_v4.md)(約 2.3 萬字)、
 > [修復輪的提示詞](docs/v4/PROMPT_v4_fix.md),以及[每一輪實際做了什麼的紀錄](docs/v4/PROGRESS.md)。
-> 兩份提示詞也可以在 [Releases](../../releases/latest) 單獨下載。
+> 兩份提示詞也可以在 [Releases](../../releases/latest) 單獨下載。用它們或源碼發布影片時,請照[這裡的格式](#用本項目發布影片)註明出處。
 >
 > Everything the maker asked the AI for is public in [`docs/`](docs/README.md): the [full prompt of version 4](docs/v4/PROMPT_v4.md)
 > (about 23,000 Chinese characters), the [prompt of the fix round](docs/v4/PROMPT_v4_fix.md), and the
 > [log of what was actually built](docs/v4/PROGRESS.md). They are written in Chinese; [`docs/README.md`](docs/README.md) says in
 > English what each file contains. The two prompt files can also be downloaded on their own from [Releases](../../releases/latest).
+> If you publish a video made with them or with the code, please credit it as described [here](#publishing-a-video-made-with-this-project).
 
 > [!WARNING]
 > **閃光警告 · PHOTOSENSITIVITY WARNING**
@@ -99,11 +100,32 @@ Python 只有重新分析音頻與檢查導出檔時才需要,見下方「檢查
 
 提示詞是製作過程的紀錄,不是一鍵復現的配方:第四版的提示詞是在第三版已經存在的前提下寫的。
 
+### 用本項目發布影片
+
+歡迎拿去做你自己的版本。發布時請在簡介裡寫明你用了什麼(源碼、提示詞,或兩者),並附上原影片與倉庫的連結。
+可以直接複製下面這段改一改(影片裡沒有用到角色剪影,就刪掉第四行):
+
+```text
+本视频使用了开源项目 world-execute-me-lyric-mv 的【源码 / 提示词】
+仓库:https://github.com/Nyankomintsu/world-execute-me-lyric-mv
+原视频:https://www.bilibili.com/video/BV186pc65E68
+角色剪影 © Nyankomint,CC BY-NC-SA 4.0
+原曲:Mili《world.execute(me);》;本视频含 AI 生成内容
+```
+
+哪些是授權本身的要求,哪些只是請求:
+
+- **畫面是用本項目的源碼渲染的**:片中到處是角色剪影,它們是 CC BY-NC-SA 4.0,所以署名(Nyankomint)、註明授權、不得商用是授權本身的要求;
+  改動了剪影就註明改過,改編的部分以同樣的授權分享。
+- **只參考了提示詞,畫面是自己做的**:沒有法律上的要求,單純希望你照上面的格式註明出處。
+- **轉載程式碼或文件本身**(例如把提示詞全文貼到別處):保留 [LICENSE](LICENSE) 裡的版權聲明,這是 MIT 的要求。
+- **歌曲**:不論哪一種,都請遵守 [Mili 官方的著作權指引](https://projectmili.com/copyright-guidelines):個人、非商業,並標示含 AI 生成內容。
+
 ### 聲明與授權
 
 - 非官方同人作品,與 Mili、Anthropic 均無關,未獲其授權或背書;Claude 是 Anthropic 的商標。介面全部以程式碼繪製,未使用截圖。
 - **含 AI 生成內容**:程式碼與文件由 AI 撰寫,角色剪影是製作者以 AI 圖像生成工具製作的。
-- 程式碼與本項目自己撰寫的文件:MIT,見 [LICENSE](LICENSE)。角色剪影(`assets/character/`)與含有它們的畫面:CC BY-NC-SA 4.0。
+- 程式碼與本項目自己撰寫的文件:MIT,見 [LICENSE](LICENSE)。角色剪影(`assets/character/`)與含有它們的畫面:CC BY-NC-SA 4.0(署名:Nyankomint)。
 - 歌曲與歌詞屬於 Mili 及相關權利人,不在本倉庫內,也不在上述授權之內。由本工程導出的影片含有原曲,
   分享時請遵守 [Mili 官方的著作權指引](https://projectmili.com/copyright-guidelines)(個人、非商業;標示含 AI 生成內容)。
 - 原曲、角色圖、字體與各項授權的完整說明:[CREDITS.md](CREDITS.md)。
@@ -183,12 +205,37 @@ every round came from the maker. All the documents that went back and forth are 
 The prompts and the build log are in Chinese. They are a record of how the film was made, not a one-shot recipe:
 the prompt of version 4 was written when version 3 already existed.
 
+### Publishing a video made with this project
+
+You are welcome to make your own version. When you publish it, please say in the description what you used (the source code,
+the prompts, or both) and link the original video and this repository. You can copy this and adjust it (drop the fourth line
+if your video does not use the character silhouettes):
+
+```text
+Made with the [source code / prompts] of world-execute-me-lyric-mv
+Repository: https://github.com/Nyankomintsu/world-execute-me-lyric-mv
+Original video: https://www.bilibili.com/video/BV186pc65E68
+Character silhouettes © Nyankomint, CC BY-NC-SA 4.0
+Song: "world.execute(me);" by Mili. Contains AI-generated content.
+```
+
+What the licences require, and what is only a request:
+
+- **Pictures rendered with the source code of this project**: the character silhouettes are all over the film and are licensed
+  CC BY-NC-SA 4.0, so credit (Nyankomint), naming the licence and non-commercial use are required by that licence; if you
+  changed the silhouettes, say so, and share the adapted material under the same licence.
+- **Only the prompts, with pictures of your own**: there is no legal requirement; this is simply a request to credit as above.
+- **Copying the code or the documents themselves** (for example, reposting the full text of a prompt): keep the copyright
+  notice in [LICENSE](LICENSE), as MIT requires.
+- **The song**: in every case, please follow [Mili's copyright guidelines](https://projectmili.com/copyright-guidelines):
+  personal, non-commercial, and mark AI-generated content.
+
 ### Notices and licences
 
 - Unofficial fan work. Not affiliated with, or endorsed by, Mili or Anthropic. Claude is a trademark of Anthropic.
   The interface is drawn entirely in code; no screenshots are used.
 - **Contains AI-generated content**: the code and the documents were written by AI, and the character silhouettes were made by the maker with an AI image generator.
-- Code and the documents written for this project: MIT, see [LICENSE](LICENSE). Character silhouettes (`assets/character/`) and pictures that contain them: CC BY-NC-SA 4.0.
+- Code and the documents written for this project: MIT, see [LICENSE](LICENSE). Character silhouettes (`assets/character/`) and pictures that contain them: CC BY-NC-SA 4.0 (credit: Nyankomint).
 - The song and its lyrics belong to Mili and the respective rights holders. They are not in this repository and not covered by the licences above.
   A video exported from this project contains the original song: share it only as [Mili's copyright guidelines](https://projectmili.com/copyright-guidelines) allow
   (personal, non-commercial; mark AI-generated content).
@@ -455,7 +502,7 @@ export/           server.mjs(靜態伺服器)、export.mjs(無頭 Chrome → ffm
 ## 授權
 
 - 程式碼與本項目自己撰寫的文件:MIT,見 [LICENSE](LICENSE)。
-- 角色剪影(`assets/character/`)與含有它們的畫面:CC BY-NC-SA 4.0。
+- 角色剪影(`assets/character/`)與含有它們的畫面:CC BY-NC-SA 4.0(署名:Nyankomint)。
 - 歌曲與歌詞屬於 Mili 及相關權利人,不在本倉庫內,也不在上述授權之內;由本工程導出的影片含有原曲,
   分享時請遵守 [Mili 官方的著作權指引](https://projectmili.com/copyright-guidelines)(個人、非商業;標示含 AI 生成內容)。
 - Claude 是 Anthropic 的商標。各項的完整說明見 [CREDITS.md](CREDITS.md)。

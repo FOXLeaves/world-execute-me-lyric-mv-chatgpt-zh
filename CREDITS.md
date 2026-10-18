@@ -14,7 +14,7 @@
 | 內容 | 授權 |
 | --- | --- |
 | 程式碼(`src/`、`export/`、`tools/`、`index.html`、`config.json`),以及本項目自己撰寫的文件、聊天文案與錯誤文案(`docs/`) | MIT,見 [LICENSE](LICENSE) |
-| 角色剪影(`assets/character/*.png`)與含有它們的畫面(例如 `docs/images/cover.jpg`) | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hant):署名、非商業、以相同方式分享 |
+| 角色剪影(`assets/character/*.png`)與含有它們的畫面(例如 `docs/images/cover.jpg`) | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hant):署名、非商業、以相同方式分享。署名:Nyankomint |
 | 歌曲的錄音、音樂與歌詞 | **不在本倉庫內**。權利屬於 Mili 及相關權利人,上面兩種授權都不涵蓋它們 |
 | 字體 | 不在本倉庫內,安裝時由 npm 取得;各為 SIL OFL 1.1(見下方「字體」) |
 | Claude 的名稱與標誌 | Anthropic 的商標;上面兩種授權都不涉及任何商標權利 |
@@ -117,7 +117,7 @@ This project is an **unofficial fan work**.
 | Content | Licence |
 | --- | --- |
 | The code (`src/`, `export/`, `tools/`, `index.html`, `config.json`) and the documents, chat text and error text written for this project (`docs/`) | MIT, see [LICENSE](LICENSE) |
-| The character silhouettes (`assets/character/*.png`) and pictures that contain them (for example `docs/images/cover.jpg`) | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): attribution, non-commercial, share alike |
+| The character silhouettes (`assets/character/*.png`) and pictures that contain them (for example `docs/images/cover.jpg`) | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): attribution, non-commercial, share alike. Credit: Nyankomint |
 | The recording, the music and the lyrics of the song | **Not in this repository.** They belong to Mili and the respective rights holders; neither licence above covers them |
 | The fonts | Not in this repository; fetched by npm at install time; each under SIL OFL 1.1 |
 | The name and marks of Claude | Trademarks of Anthropic; neither licence above grants any trademark right |
